@@ -28,7 +28,7 @@ const SearchScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={{ padding: 5, margin: 5 }}>
+    <>
       <View style={{ margin: 5 }}>
         <Text>Welcome, To the SearchScreen</Text>
       </View>
@@ -48,7 +48,7 @@ const SearchScreen = ({ navigation }) => {
           );
         }}
       />
-    </View>
+    </>
   );
 };
 
