@@ -7,12 +7,21 @@ import coffida from "../api/coffida";
 import AuthenticationHelper from "../helpers/AuthenticationHelper";
 
 const LoginScreen = ({ navigation }) => {
+  console.log(navigation.getParam("email"), navigation.getParam("password"));
+
   const [email, setEmail] = useState("bashley.williams@mmu.ac.uk");
   const [password, setPassword] = useState("hello123");
 
   useEffect(() => {
     redirectIfNotLoggedIn();
   }, []);
+
+  useEffect(() => {
+    if (navigation.getParam("email") && navigation.getParam("password")) {
+      setEmail(navigation.getParam("email"));
+      setPassword(navigation.getParam("password"));
+    }
+  }, [navigation.getParam("email"), navigation.getParam("password")]);
 
   const redirectIfNotLoggedIn = async () => {
     if (await AuthenticationHelper.validateAccessToken()) {
