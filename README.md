@@ -9,16 +9,11 @@ https://www.npmjs.com/package/react-native-form-validator
 
 https://console.cloud.google.com/apis/library/maps-android-backend.googleapis.com?authuser=3&folder=&organizationId=&project=enterpriseproject18055445
 
-{
-"avg_clenliness_rating": 0,
-"avg_overall_rating": 0,
-"avg_price_rating": 0,
-"avg_quality_rating": 0,
-"latitude": 80,
-"location_id": 3,
-"location_name": "Mary's",
-"location_reviews": Array [],
-"location_town": "London",
-"longitude": 0,
-"photo_path": "http://cdn.dummyphoto.com",
-},
+
+### Changes
+
+- 01/02/2021
+- - Updated the account creation, login and home screens
+- - Added profanity checker helper
+- - Added validation checker
+- - Large changes to various screens and logic
