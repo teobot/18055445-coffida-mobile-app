@@ -4,7 +4,7 @@ import { withNavigation } from "react-navigation";
 
 import coffida from "../api/coffida";
 
-import AuthenticationHelper from "../helpers/AuthenticationHelper";
+import LocationCard from "../components/LocationCard";
 
 const SearchScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);
@@ -12,11 +12,6 @@ const SearchScreen = ({ navigation }) => {
   useEffect(() => {
     getResult();
   }, []);
-
-  const logout = async () => {
-    await AuthenticationHelper.removeAccessToken();
-    navigation.navigate("Login");
-  };
 
   const getResult = async () => {
     try {
@@ -29,23 +24,11 @@ const SearchScreen = ({ navigation }) => {
 
   return (
     <>
-      <View style={{ margin: 5 }}>
-        <Text>Welcome, To the SearchScreen</Text>
-      </View>
-      <View style={{ margin: 5 }}>
-        <Button title="Logout" onPress={() => logout()} />
-      </View>
       <FlatList
         data={results}
         keyExtractor={(result) => `${result.location_id}`}
         renderItem={({ item }) => {
-          return (
-            <View
-              style={{ padding: 5, margin: 5, backgroundColor: "lightgrey" }}
-            >
-              <Text>{item.location_name}</Text>
-            </View>
-          );
+          return <LocationCard item={item} />;
         }}
       />
     </>
