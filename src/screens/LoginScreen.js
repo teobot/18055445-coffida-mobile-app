@@ -24,7 +24,8 @@ const LoginScreen = ({ navigation }) => {
   }, [navigation.getParam("email"), navigation.getParam("password")]);
 
   const redirectIfNotLoggedIn = async () => {
-    if (await AuthenticationHelper.validateAccessToken()) {
+    const validAccessToken = await AuthenticationHelper.validateAccessToken();
+    if (validAccessToken) {
       console.log("Redirecting as the token is already valid.");
       navigation.navigate("Search");
     }
@@ -37,15 +38,15 @@ const LoginScreen = ({ navigation }) => {
         password: password,
       });
       // Login is successful
-      const { id, token } = response.data;
-      await AuthenticationHelper.setAccessToken(token);
+      const { token } = response.data;
+      const token_set = await AuthenticationHelper.setAccessToken(token);
       navigation.navigate("Search");
     } catch (error) {
       // Login request failed
       if (error.response.status === "400") {
-        // Bad login credentials
+        // TODO: Bad login credentials
       } else {
-        // most likely networking issue
+        // TODO: most likely networking issue
       }
     }
   };
