@@ -8,7 +8,8 @@ import AuthenticationHelper from "../helpers/AuthenticationHelper";
 
 const LogoutButton = ({ navigation }) => {
   const logout = async () => {
-    await AuthenticationHelper.removeAccessToken();
+    await AuthenticationHelper.id_Reducer({ type: "delete_id" });
+    await AuthenticationHelper.token_Reducer({ type: "delete_token" });
     navigation.navigate("Login");
   };
 
