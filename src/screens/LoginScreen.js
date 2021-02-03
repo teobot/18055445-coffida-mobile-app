@@ -24,7 +24,9 @@ const LoginScreen = ({ navigation }) => {
   }, [navigation.getParam("email"), navigation.getParam("password")]);
 
   const redirectIfNotLoggedIn = async () => {
-    const validAccessToken = await AuthenticationHelper.validateAccessToken();
+    const validAccessToken = await AuthenticationHelper.token_Reducer({
+      type: "validate_token",
+    });
     if (validAccessToken) {
       console.log("Redirecting as the token is already valid.");
       navigation.navigate("Search");
@@ -38,8 +40,16 @@ const LoginScreen = ({ navigation }) => {
         password: password,
       });
       // Login is successful
-      const { token } = response.data;
-      const token_set = await AuthenticationHelper.setAccessToken(token);
+      const { id, token } = response.data;
+      const token_set = await AuthenticationHelper.token_Reducer({
+        type: "set_token",
+        payload: token,
+      });
+      const id_set = await AuthenticationHelper.id_Reducer({
+        type: "set_id",
+        payload: `${id}`,
+      });
+      console.log(id, token);
       navigation.navigate("Search");
     } catch (error) {
       // Login request failed
