@@ -7,8 +7,10 @@ import CreateAccountScreen from "./src/screens/CreateAccountScreen";
 import LoginScreen from "./src/screens/LoginScreen";
 import SearchScreen from "./src/screens/SearchScreen";
 import LocationScreen from "./src/screens/LocationScreen";
+import AccountScreen from "./src/screens/AccountScreen";
 
 import LogoutButton from "./src/components/LogoutButton";
+import AccountButton from "./src/components/AccountButton";
 
 const navigator = createStackNavigator(
   {
@@ -22,7 +24,8 @@ const navigator = createStackNavigator(
     Search: {
       screen: SearchScreen,
       navigationOptions: {
-        headerLeft: () => null,
+        title: null,
+        headerLeft: () => <AccountButton />,
         headerRight: () => <LogoutButton />,
       },
     },
@@ -30,7 +33,13 @@ const navigator = createStackNavigator(
       screen: LocationScreen,
       navigationOptions: {
         headerRight: () => <LogoutButton />,
-        title: "Something new",
+      },
+    },
+    Account: {
+      screen: AccountScreen,
+      navigationOptions: {
+        title: "Account Management",
+        headerRight: () => <LogoutButton />,
       },
     },
   },
