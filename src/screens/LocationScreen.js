@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { withNavigation } from "react-navigation";
 import { AntDesign } from "@expo/vector-icons";
-import { Rating, AirbnbRating } from "react-native-ratings";
 
 import coffida from "../api/coffida";
 
@@ -61,7 +60,7 @@ const LocationScreen = ({ navigation }) => {
           <View
             style={{
               position: "absolute",
-              top: -90,
+              top: -110,
               padding: 10,
             }}
           >
@@ -69,21 +68,34 @@ const LocationScreen = ({ navigation }) => {
               style={{
                 fontSize: 36,
                 color: "white",
-                textShadowColor: "rgba(0, 0, 0, 0.9)",
-                textShadowOffset: { width: -1, height: 1 },
-                textShadowRadius: 20,
+                ...styles.textShadow,
               }}
             >
               {locationResult.location_name}
             </Text>
-            <Text style={{ fontSize: 22, color: "white" }}>
-              <Rating
-                minValue={0}
-                startingValue={locationResult.avg_overall_rating}
-                style={{ backgroundColor: "transparent" }}
-                imageSize={25}
+
+            <View style={{ flexDirection: "row", flex: 1 }}>
+              <AntDesign
+                name="star"
+                style={{ color: "gold", fontSize: 40, alignSelf: "center" }}
               />
-            </Text>
+              <View
+                style={{
+                  marginHorizontal: 2,
+                  paddingHorizontal: 2,
+                  justifyContent: "center",
+                  alignSelf: "center",
+                  ...styles.textShadow,
+                }}
+              >
+                <Text style={{ fontSize: 14, color: "white" }}>
+                  Overall Rating
+                </Text>
+                <Text style={{ fontSize: 22, color: "white" }}>
+                  {locationResult.avg_overall_rating.toFixed(1)}
+                </Text>
+              </View>
+            </View>
           </View>
           <View
             style={{
@@ -94,7 +106,7 @@ const LocationScreen = ({ navigation }) => {
           >
             <View style={styles.locationStatsStyleContainer}>
               <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_clenliness_rating}
+                {locationResult.avg_clenliness_rating.toFixed(1)}
                 <AntDesign name="star" style={styles.starIconStyle} />
               </Text>
               <Text style={styles.locationStatSubTextStyle}>
@@ -103,14 +115,14 @@ const LocationScreen = ({ navigation }) => {
             </View>
             <View style={styles.locationStatsStyleContainer}>
               <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_price_rating}
+                {locationResult.avg_price_rating.toFixed(1)}
                 <AntDesign name="star" style={styles.starIconStyle} />
               </Text>
               <Text style={styles.locationStatSubTextStyle}>Price Rating</Text>
             </View>
             <View style={styles.locationStatsStyleContainer}>
               <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_quality_rating}
+                {locationResult.avg_quality_rating.toFixed(1)}
                 <AntDesign name="star" style={styles.starIconStyle} />
               </Text>
               <Text style={styles.locationStatSubTextStyle}>
@@ -142,6 +154,11 @@ const styles = StyleSheet.create({
     color: "gold",
     alignSelf: "center",
     fontSize: 20,
+  },
+  textShadow: {
+    textShadowColor: "rgba(0, 0, 0, 0.9)",
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 20,
   },
 });
 
