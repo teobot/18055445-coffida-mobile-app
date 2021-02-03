@@ -2,7 +2,18 @@
 
 ## Changes
 
-### 02/02/2012
+### 03/02/2021
+- App: Added account screen button, Added new account screen,
+- Update dependencies
+- Created new account button for the navigation
+- LocationCard: Change the locationCard star rating to 2 fixed decimal places
+- LogoutButton: Updated to use new AuthenticationHelper reducer code
+- AuthenticationHelper: Updated to use reducers, This now reuses more code and makes it easier for new development
+- Created new account page, this displays all the users account information
+- LocationScreen: Ratings are now to fixed 2 decimal places, Added new overall rating, Changed various styling
+- LoginScreen: Updated to use new AuthenticationHelper reducer code
+
+### 02/02/2021
 - Added Location Screen
 - Added Logout Button to 2 Screens
 - Changed App.js export component to allow for title changes
