@@ -29,7 +29,7 @@ const LocationCard = ({ item, navigation }) => {
         />
         <Text style={styles.name}>{location_name}</Text>
         <Text>
-          {avg_overall_rating} Stars, {location_reviews.length} Reviews
+          {avg_overall_rating.toFixed(1)} Stars, {location_reviews.length} Reviews
         </Text>
       </View>
     </TouchableOpacity>
