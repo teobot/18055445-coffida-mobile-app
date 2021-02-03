@@ -2,60 +2,92 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import coffida from "../api/coffida";
 
+const ACCESS_TOKEN_ITEM_NAME = "@MY_ACCESS_TOKEN";
+const USER_ID_ITEM_NAME = "@ID";
+
 export default class AuthenticationHelper {
-  static setAccessToken = async (accessToken) => {
-    //   This sets the accessToken
-    try {
-      console.log(`Setting the access token.`);
-      await AsyncStorage.setItem("@MY_ACCESS_TOKEN", accessToken);
-      coffida.defaults.headers.common['X-Authorization'] = accessToken;
-    } catch (error) {
-      // Error saving data
+  static token_Reducer = async (action) => {
+    // This is a reducer that decides logic with the user token
+    switch (action.type) {
+      case "get_token":
+        return await this.getAsyncStorageItem(ACCESS_TOKEN_ITEM_NAME);
+      case "set_token":
+        coffida.defaults.headers.common["X-Authorization"] = action.payload;
+        return await this.setAsyncStorageItem({
+          itemTitle: ACCESS_TOKEN_ITEM_NAME,
+          itemPayload: action.payload,
+        });
+      case "delete_token":
+        return await this.deleteAsyncStorageItem(ACCESS_TOKEN_ITEM_NAME);
+      case "validate_token":
+        return await this.validateAccessToken();
+      default:
+        return null;
     }
   };
 
-  static getAccessToken = async () => {
-    //   This returns the accessToken
+  static id_Reducer = async (action) => {
+    // This is a reducer that decides logic with the user ID
+    switch (action.type) {
+      case "get_id":
+        return await this.getAsyncStorageItem(USER_ID_ITEM_NAME);
+      case "set_id":
+        return await this.setAsyncStorageItem({
+          itemTitle: USER_ID_ITEM_NAME,
+          itemPayload: action.payload,
+        });
+      case "delete_id":
+        return await this.deleteAsyncStorageItem(USER_ID_ITEM_NAME);
+      default:
+        return null;
+    }
+  };
+
+  static setAsyncStorageItem = async ({ itemTitle, itemPayload }) => {
+    // Set the given item in async storage
     try {
-      console.log("Reading the access token.");
-      const value = await AsyncStorage.getItem("@MY_ACCESS_TOKEN");
+      await AsyncStorage.setItem(itemTitle, "" + itemPayload);
+    } catch (error) {
+      // TODO: error setting the payload
+    }
+  };
+
+  static getAsyncStorageItem = async (itemTitle) => {
+    // Get the given item from async storage
+    try {
+      const value = await AsyncStorage.getItem(itemTitle);
       if (value !== null) {
         // We have data!!
         return value;
       }
     } catch (error) {
-      // Error retrieving data
+      // TODO: Error retrieving data
     }
     return null;
   };
 
-  static removeAccessToken = async () => {
+  static deleteAsyncStorageItem = async (itemTitle) => {
     //   This removes the accessToken on logout
-    console.log("Removing AccessToken");
     try {
-      await AsyncStorage.removeItem("@MY_ACCESS_TOKEN");
+      await AsyncStorage.removeItem(itemTitle);
     } catch (e) {
-      // remove error
+      // TODO: error removing the given storage item
     }
   };
 
   static validateAccessToken = async () => {
     //   Returns TRUE if the accessToken is valid
-    console.log("Validating Access Token.");
     try {
       const r = await getAccessToken();
       try {
         // Value is being stored, Check if its valid
         const response = await coffida.get("/find?limit=1");
-        console.log("valid access token");
         return true;
       } catch (error) {
         // failed
-        console.log("invalid access token");
         return false;
       }
     } catch (err) {
-      console.log("AccessToken isn't in storage.");
       return false;
     }
   };
