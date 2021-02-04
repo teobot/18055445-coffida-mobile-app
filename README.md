@@ -5,7 +5,7 @@
 - [x] have the login screen show loading while it tries to find if the user is already logged in
 
 ### Issues
-#### All new fixes with be moved to the issues page on GitHub
+#### All new issues with be moved to the issues page on GitHub
 - ~~fix app crash when user clicks on location that doesn't have review or ratings.~~
 - ~~fix the review card, its now in a horizontal flatlist so needs changing~~
 
