@@ -6,14 +6,16 @@ import coffida from "../api/coffida";
 
 import AuthenticationHelper from "../helpers/AuthenticationHelper";
 
-const LoginScreen = ({ navigation }) => {
-  console.log(navigation.getParam("email"), navigation.getParam("password"));
+import LoadingScreen from "./LoadingScreen"
 
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("bashley.williams@mmu.ac.uk");
   const [password, setPassword] = useState("hello123");
 
+  const [showLoginLoader, setShowLoginLoader] = useState(true)
+
   useEffect(() => {
-    redirectIfNotLoggedIn();
+    redirectIfLoggedIn();
   }, []);
 
   useEffect(() => {
@@ -23,14 +25,17 @@ const LoginScreen = ({ navigation }) => {
     }
   }, [navigation.getParam("email"), navigation.getParam("password")]);
 
-  const redirectIfNotLoggedIn = async () => {
+  const redirectIfLoggedIn = async () => {
     const validAccessToken = await AuthenticationHelper.token_Reducer({
       type: "validate_token",
     });
-    if (validAccessToken) {
+    if (validAccessToken.valid) {
       console.log("Redirecting as the token is already valid.");
       navigation.navigate("Search");
+    } else {
+      // User does not have a valid token, ask them to login
     }
+    setShowLoginLoader(false)
   };
 
   const handleLogin = async (email, password) => {
@@ -47,7 +52,7 @@ const LoginScreen = ({ navigation }) => {
       });
       const id_set = await AuthenticationHelper.id_Reducer({
         type: "set_id",
-        payload: `${id}`,
+        payload: id,
       });
       console.log(id, token);
       navigation.navigate("Search");
@@ -60,6 +65,10 @@ const LoginScreen = ({ navigation }) => {
       }
     }
   };
+
+  if(showLoginLoader) {
+    return <LoadingScreen message="Checking saved login credentials!"/>
+  }
 
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
