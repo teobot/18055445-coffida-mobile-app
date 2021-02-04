@@ -6,8 +6,14 @@ const ACCESS_TOKEN_ITEM_NAME = "@MY_ACCESS_TOKEN";
 const USER_ID_ITEM_NAME = "@ID";
 
 export default class AuthenticationHelper {
+  /**
+   *This is a reducer that handles the logic of the user token.
+   *
+   * @static
+   * @param {*} action.type = {type: TYPE, payload: PAYLOAD}
+   * @memberof AuthenticationHelper
+   */
   static token_Reducer = async (action) => {
-    // This is a reducer that decides logic with the user token
     switch (action.type) {
       case "get_token":
         return await this.getAsyncStorageItem(ACCESS_TOKEN_ITEM_NAME);
@@ -26,8 +32,14 @@ export default class AuthenticationHelper {
     }
   };
 
+  /**
+   *This is a reducer that handles the logic of the user id.
+   *
+   * @static
+   * @param {*} action = {type: TYPE, payload: PAYLOAD}
+   * @memberof AuthenticationHelper
+   */
   static id_Reducer = async (action) => {
-    // This is a reducer that decides logic with the user ID
     switch (action.type) {
       case "get_id":
         return await this.getAsyncStorageItem(USER_ID_ITEM_NAME);
@@ -42,18 +54,28 @@ export default class AuthenticationHelper {
         return null;
     }
   };
-
+  /**
+   *This method sets the given item into async storage along with the given title.
+   *
+   * @static
+   * @param {*} { itemTitle, itemPayload }
+   * @memberof AuthenticationHelper
+   */
   static setAsyncStorageItem = async ({ itemTitle, itemPayload }) => {
-    // Set the given item in async storage
     try {
       await AsyncStorage.setItem(itemTitle, "" + itemPayload);
     } catch (error) {
       // TODO: error setting the payload
     }
   };
-
+  /**
+   *This method retrieves the given item from async storage using the supplied item key
+   *
+   * @static
+   * @param {*} itemTitle
+   * @memberof AuthenticationHelper
+   */
   static getAsyncStorageItem = async (itemTitle) => {
-    // Get the given item from async storage
     try {
       const value = await AsyncStorage.getItem(itemTitle);
       if (value !== null) {
@@ -65,30 +87,64 @@ export default class AuthenticationHelper {
     }
     return null;
   };
-
+  /**
+   *This method deletes the given item from async storage using the supplied item key
+   *
+   * @static
+   * @param {*} itemTitle
+   * @memberof AuthenticationHelper
+   */
   static deleteAsyncStorageItem = async (itemTitle) => {
-    //   This removes the accessToken on logout
     try {
       await AsyncStorage.removeItem(itemTitle);
     } catch (e) {
       // TODO: error removing the given storage item
     }
   };
-
+  /**
+   *This method validates the token, it will return TRUE if the stored token is valid, else FALSE
+   *
+   * @static
+   * @returns TRUE if token is valid else FALSE
+   * @memberof AuthenticationHelper
+   */
   static validateAccessToken = async () => {
-    //   Returns TRUE if the accessToken is valid
     try {
-      const r = await getAccessToken();
+      // Test is the token is saved
+      const token = await this.token_Reducer({ type: "get_token" });
       try {
-        // Value is being stored, Check if its valid
-        const response = await coffida.get("/find?limit=1");
-        return true;
+        // Token is in storage but we need to test if its valid
+        const response = await coffida.get("/find?limit=1", {
+          headers: {
+            "X-Authorization": token,
+          },
+        });
+        // Token exists in storage and returned back data so its valid
+        // Set the coffida axios instance to now always send the "X-Authorization" header with every request past here
+        coffida.defaults.headers.common["X-Authorization"] = token;
+        // Return back return meaning that token is valid
+        return {
+          message: "Token is valid",
+          valid: true,
+        };
       } catch (error) {
-        // failed
-        return false;
+        // Token is in storage but not valid, need to remove it and return false
+        console.log(
+          "Token is in storage but according to database it's not valid"
+        );
+        await this.token_Reducer({ type: "delete_token" });
+        return {
+          message: "Token has changed, Login to continue!",
+          valid: false,
+        };
       }
-    } catch (err) {
-      return false;
+    } catch (error) {
+      // Token is not in storage return false
+      console.log("Token is not in storage");
+      return {
+        message: "Please login :)",
+        valid: false,
+      };
     }
   };
 }
