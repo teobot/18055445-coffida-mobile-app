@@ -1,6 +1,29 @@
 # Coffida React Native Mobile App
 
+### To Add
+- [ ] Confirm password input from account creation
+- [x] have the login screen show loading while it tries to find if the user is already logged in
+
+### Issues
+#### All new fixes with be moved to the issues page on GitHub
+- ~~fix app crash when user clicks on location that doesn't have review or ratings.~~
+- ~~fix the review card, its now in a horizontal flatlist so needs changing~~
+
 ## Changes
+
+### 04/02/2021
+- App.js: Removed single comment
+- Updated various dependencies
+- Location Card: Changed imports, added fix to locations without ratings
+- Added new favourite button for the user to "like" a location
+- Added new ResultsRow component, Hopefully should be able to reuse alot of flatlist code
+- Added new ReviewCard, this displays a user review
+- AuthenticationHelper: Added comments
+- ValidationHelper: Added comments
+- AccountScreen: Added hook for updating information upon "goBack" method call, Added the display of the reviews and favourite locations, Various logic and styling changes
+- Added new loading screen, this is for the user when information is being requested, it can be passed a customized message parameter
+- LocationScreen: Various import changes, Fixed bug where ratings with null values would cause crash, Added new loading screen
+- LoginScreen: Added the new loading screen, various logic changes, reducer payload changes
 
 ### 03/02/2021
 - App: Added account screen button, Added new account screen,
