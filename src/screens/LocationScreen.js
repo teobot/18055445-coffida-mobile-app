@@ -13,11 +13,50 @@ import { AntDesign } from "@expo/vector-icons";
 
 import coffida from "../api/coffida";
 
+import LoadingScreen from "../screens/LoadingScreen";
+
+import ResultRow from "../components/ResultRow";
+import ReviewCard from "../components/ReviewCard";
+import LocationLikeButton from "../components/LocationLikeButton";
+
+import { Divider } from "react-native-elements";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+
+// "location_reviews": Array [
+//   Object {
+//     "clenliness_rating": 4,
+//     "likes": 2,
+//     "overall_rating": 4,
+//     "price_rating": 5,
+//     "quality_rating": 3,
+//     "review_body": "Great atomosphere, great coffee",
+//     "review_id": 1,
+//   },
+//   Object {
+//     "clenliness_rating": 3,
+//     "likes": 2,
+//     "overall_rating": 3,
+//     "price_rating": 3,
+//     "quality_rating": 3,
+//     "review_body": "Not as good now that they've upped their prices",
+//     "review_id": 3,
+//   },
+//   Object {
+//     "clenliness_rating": 4,
+//     "likes": 1,
+//     "overall_rating": 4,
+//     "price_rating": 5,
+//     "quality_rating": 3,
+//     "review_body": "Great atomosphere, great coffee",
+//     "review_id": 7,
+//   },
+// ],
+
 const LocationScreen = ({ navigation }) => {
   const location_id = navigation.getParam("location_id");
   const [locationResult, setLocationResult] = useState(null);
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
 
   useEffect(() => {
     getLocationInformation(location_id);
@@ -34,12 +73,15 @@ const LocationScreen = ({ navigation }) => {
   };
 
   if (locationResult === null) {
-    //   TODO: return some kind of splash screen or loading
-    return null;
+    // Location data is yet to return
+    // TODO: return some kind of splash screen or loading
+    return <LoadingScreen message="Gathering location information" />;
   }
 
   return (
     <ScrollView>
+      <LocationLikeButton id={location_id} />
+
       <Image
         style={{ height: windowWidth * 1.1, width: windowWidth }}
         source={{
@@ -92,7 +134,9 @@ const LocationScreen = ({ navigation }) => {
                   Overall Rating
                 </Text>
                 <Text style={{ fontSize: 22, color: "white" }}>
-                  {locationResult.avg_overall_rating.toFixed(1)}
+                  {locationResult.avg_overall_rating !== null
+                    ? locationResult.avg_overall_rating.toFixed(1)
+                    : 0}
                 </Text>
               </View>
             </View>
@@ -106,7 +150,9 @@ const LocationScreen = ({ navigation }) => {
           >
             <View style={styles.locationStatsStyleContainer}>
               <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_clenliness_rating.toFixed(1)}
+                {locationResult.avg_clenliness_rating !== null
+                  ? locationResult.avg_clenliness_rating.toFixed(1)
+                  : 0}
                 <AntDesign name="star" style={styles.starIconStyle} />
               </Text>
               <Text style={styles.locationStatSubTextStyle}>
@@ -115,14 +161,18 @@ const LocationScreen = ({ navigation }) => {
             </View>
             <View style={styles.locationStatsStyleContainer}>
               <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_price_rating.toFixed(1)}
+                {locationResult.avg_price_rating !== null
+                  ? locationResult.avg_price_rating.toFixed(1)
+                  : 0}
                 <AntDesign name="star" style={styles.starIconStyle} />
               </Text>
               <Text style={styles.locationStatSubTextStyle}>Price Rating</Text>
             </View>
             <View style={styles.locationStatsStyleContainer}>
               <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_quality_rating.toFixed(1)}
+                {locationResult.avg_quality_rating !== null
+                  ? locationResult.avg_quality_rating.toFixed(1)
+                  : "?"}
                 <AntDesign name="star" style={styles.starIconStyle} />
               </Text>
               <Text style={styles.locationStatSubTextStyle}>
@@ -130,6 +180,15 @@ const LocationScreen = ({ navigation }) => {
               </Text>
             </View>
           </View>
+
+          <Divider />
+
+          <ResultRow
+            title="Reviews"
+            data={locationResult.location_reviews}
+            renderItem={({ item }) => <ReviewCard review={item} />}
+            keyExtractor={(result) => "" + result.review_id}
+          />
         </View>
       </View>
     </ScrollView>
