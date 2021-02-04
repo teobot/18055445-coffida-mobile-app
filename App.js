@@ -53,5 +53,4 @@ const navigator = createStackNavigator(
 
 const AppContainer = createAppContainer(navigator);
 
-// Now AppContainer is the main component for React to render
 export default AppContainer;
