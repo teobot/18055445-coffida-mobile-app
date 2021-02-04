@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from "react-native";
 import { withNavigation } from "react-navigation";
 
 const LocationCard = ({ item, navigation }) => {
@@ -16,7 +16,7 @@ const LocationCard = ({ item, navigation }) => {
       onPress={() =>
         navigation.navigate("Location", {
           location_id,
-          title: location_name
+          title: location_name,
         })
       }
     >
@@ -29,7 +29,13 @@ const LocationCard = ({ item, navigation }) => {
         />
         <Text style={styles.name}>{location_name}</Text>
         <Text>
-          {avg_overall_rating.toFixed(1)} Stars, {location_reviews.length} Reviews
+          {avg_overall_rating === null
+            ? `Not yet rated`
+            : `${avg_overall_rating.toFixed(1)} Stars`}
+          ,{" "}
+          {location_reviews.length === 0
+            ? "No Reviews"
+            : `${location_reviews.length} Reviews`}
         </Text>
       </View>
     </TouchableOpacity>
@@ -39,6 +45,7 @@ const LocationCard = ({ item, navigation }) => {
 const styles = StyleSheet.create({
   imageStyle: {
     width: "100%",
+    minWidth: Dimensions.get("window").width * 0.5,
     height: 120,
     borderRadius: 5,
     marginBottom: 5,
