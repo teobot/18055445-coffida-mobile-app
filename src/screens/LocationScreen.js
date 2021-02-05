@@ -18,6 +18,8 @@ import LoadingScreen from "../screens/LoadingScreen";
 import ResultRow from "../components/ResultRow";
 import ReviewCard from "../components/ReviewCard";
 import LocationLikeButton from "../components/LocationLikeButton";
+import LocationQuickStats from "../components/LocationQuickStats";
+import LocationRatingStats from "../components/LocationRatingStats";
 
 import { Divider } from "react-native-elements";
 
@@ -82,12 +84,21 @@ const LocationScreen = ({ navigation }) => {
     <ScrollView>
       <LocationLikeButton id={location_id} />
 
-      <Image
-        style={{ height: windowWidth * 1.1, width: windowWidth }}
-        source={{
-          uri: `https://source.unsplash.com/400x450/?coffee,shop?sig=${locationResult.location_id}`,
-        }}
-      />
+      <View style={{ flex: 1, height: windowWidth * 1.1 }}>
+        <Image
+          style={{ height: windowWidth * 1.1, width: windowWidth }}
+          source={{
+            uri: `https://source.unsplash.com/400x450/?coffee,shop?sig=${locationResult.location_id}`,
+          }}
+        />
+        <LocationQuickStats
+          styles={{ position: 0, bottom: 10, paddingHorizontal: 10 }}
+          name={locationResult.location_name}
+          rating={locationResult.avg_overall_rating}
+          ratingTitle="Overall Rating"
+        />
+      </View>
+
       <View style={{ flex: 1, backgroundColor: "#e4e4e4" }}>
         <View
           style={{
@@ -99,96 +110,36 @@ const LocationScreen = ({ navigation }) => {
             height: windowHeight * 2,
           }}
         >
-          <View
-            style={{
-              position: "absolute",
-              top: -110,
-              padding: 10,
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 36,
-                color: "white",
-                ...styles.textShadow,
-              }}
-            >
-              {locationResult.location_name}
-            </Text>
-
-            <View style={{ flexDirection: "row", flex: 1 }}>
-              <AntDesign
-                name="star"
-                style={{ color: "gold", fontSize: 40, alignSelf: "center" }}
-              />
-              <View
-                style={{
-                  marginHorizontal: 2,
-                  paddingHorizontal: 2,
-                  justifyContent: "center",
-                  alignSelf: "center",
-                  ...styles.textShadow,
-                }}
-              >
-                <Text style={{ fontSize: 14, color: "white" }}>
-                  Overall Rating
-                </Text>
-                <Text style={{ fontSize: 22, color: "white" }}>
-                  {locationResult.avg_overall_rating !== null
-                    ? locationResult.avg_overall_rating.toFixed(1)
-                    : 0}
-                </Text>
-              </View>
-            </View>
-          </View>
-          <View
-            style={{
-              margin: 5,
-              padding: 5,
-              flexDirection: "row",
-            }}
-          >
-            <View style={styles.locationStatsStyleContainer}>
-              <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_clenliness_rating !== null
-                  ? locationResult.avg_clenliness_rating.toFixed(1)
-                  : 0}
-                <AntDesign name="star" style={styles.starIconStyle} />
-              </Text>
-              <Text style={styles.locationStatSubTextStyle}>
-                Cleanliness Rating
-              </Text>
-            </View>
-            <View style={styles.locationStatsStyleContainer}>
-              <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_price_rating !== null
-                  ? locationResult.avg_price_rating.toFixed(1)
-                  : 0}
-                <AntDesign name="star" style={styles.starIconStyle} />
-              </Text>
-              <Text style={styles.locationStatSubTextStyle}>Price Rating</Text>
-            </View>
-            <View style={styles.locationStatsStyleContainer}>
-              <Text style={styles.locationStatHeaderStyle}>
-                {locationResult.avg_quality_rating !== null
-                  ? locationResult.avg_quality_rating.toFixed(1)
-                  : "?"}
-                <AntDesign name="star" style={styles.starIconStyle} />
-              </Text>
-              <Text style={styles.locationStatSubTextStyle}>
-                Quality Rating
-              </Text>
-            </View>
-          </View>
+          <LocationRatingStats
+            paddingSpace={12}
+            ratingRows={[
+              {
+                title: "cleanliness",
+                rating: locationResult.avg_clenliness_rating,
+              },
+              {
+                title: "price",
+                rating: locationResult.avg_price_rating,
+              },
+              {
+                title: "quality",
+                rating: locationResult.avg_quality_rating,
+              },
+            ]}
+          />
 
           <Divider />
 
           <ResultRow
             title="Reviews"
+            containerMargin={5}
+            containerPadding={5}
+            flatListHorizontal={false}
             data={locationResult.location_reviews}
             renderItem={({ item }) => <ReviewCard review={item} />}
             keyExtractor={(result) => "" + result.review_id}
           />
+
         </View>
       </View>
     </ScrollView>
