@@ -9,6 +9,9 @@ import {
 } from "react-native";
 
 import { Avatar } from "react-native-elements";
+import { AntDesign } from "@expo/vector-icons";
+
+import LocationRatingStats from "../components/LocationRatingStats";
 
 const ReviewCard = ({ review }) => {
   const {
@@ -23,14 +26,16 @@ const ReviewCard = ({ review }) => {
   return (
     <View
       style={{
-        width: Dimensions.get("window").width,
+        width: "100%",
         marginBottom: 20,
       }}
     >
-      <View style={styles.reviewContainerTop}>
-        <View style={styles.reviewTopImageStyle}>
+      <View style={{ flex: 1, flexDirection: "row" }}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <Avatar
-          size="large"
+            size={"medium"}
             rounded
             title=" "
             source={{
@@ -38,42 +43,58 @@ const ReviewCard = ({ review }) => {
             }}
           />
         </View>
-        <View style={styles.reviewDetailsStyle}>
-          <View style={{ flex: 1, backgroundColor: "red" }}></View>
-          <View style={{ flex: 1, backgroundColor: "blue" }}></View>
+        <View style={{ flex: 4 }}>
+          <LocationRatingStats
+            paddingSpace={5}
+            ratingRows={[
+              {
+                title: "cleanliness",
+                rating: clenliness_rating,
+              },
+              {
+                title: "price",
+                rating: price_rating,
+              },
+              {
+                title: "quality",
+                rating: quality_rating,
+              },
+            ]}
+          />
         </View>
-        <View style={styles.reviewDetailsSpacer}></View>
-        <View style={styles.reviewDetailsLikes}></View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <AntDesign
+            style={{ alignSelf: "center" }}
+            name="heart"
+            size={30}
+            color="red"
+          />
+          <Text style={{ fontSize: 12, fontWeight: "bold" }}>{likes}</Text>
+        </View>
       </View>
-      <View style={styles.reviewContainerBottom}>
+
+      <View style={{ flex: 1, padding: 10 }}>
         <Text>{review_body}</Text>
       </View>
     </View>
   );
 };
 
-// Object {
-//   "clenliness_rating": 4,
-//   "likes": 0,
-//   "overall_rating": 4,
-//   "price_rating": 5,
-//   "quality_rating": 3,
-//   "review_body": "I like the coffee",
-//   "review_id": 4,
-// }
-
 const styles = StyleSheet.create({
   reviewDetailsSubStyle: {
     flex: 1,
-    backgroundColor: "red",
   },
   reviewDetailsLikes: {
     flex: 1,
-    backgroundColor: "purple",
   },
   reviewDetailsSpacer: {
     flex: 1,
-    backgroundColor: "yellow",
   },
   reviewDetailsStyle: {
     flex: 2,
