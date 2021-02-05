@@ -97,14 +97,20 @@ const AccountScreen = ({ navigation }) => {
         </View>
         <ResultRow
           title="My Reviews"
+          containerMargin={5}
+          containerPadding={5}
+          flatListHorizontal={false}
           data={userInformation.reviews}
           keyExtractor={(review) => "" + review.review.review_id}
           renderItem={({ item }) => {
-            return <ReviewCard review={item} />;
+            return <ReviewCard review={item.review} />;
           }}
         />
         <ResultRow
           title="My Favourites"
+          containerMargin={5}
+          containerPadding={5}
+          flatListHorizontal={true}
           data={userInformation.favourite_locations}
           keyExtractor={(result) => `${result.location_id}`}
           renderItem={({ item }) => {
