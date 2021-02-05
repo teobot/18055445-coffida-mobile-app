@@ -2,33 +2,42 @@ import React from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Divider } from "react-native-elements";
 
-const ResultRow = ({ title, data, keyExtractor, renderItem, style }) => {
+const ResultRow = ({
+  title,
+  data,
+  keyExtractor,
+  renderItem,
+  style,
+  flatListHorizontal,
+  containerPadding,
+  containerMargin,
+}) => {
   return (
-    <View style={{ ...styles.containerStyle, ...style }}>
-      <Divider />
-      <View style={styles.resultRowContainer}>
+    <View
+      style={{
+        ...style,
+        margin: containerMargin,
+        padding: containerPadding,
+      }}
+    >
+      <View
+        style={{
+          justifyContent: "center",
+          margin: containerMargin,
+          padding: containerPadding,
+        }}
+      >
         <Text style={{ fontSize: 26, fontWeight: "bold" }}>{title}</Text>
         <FlatList
-          horizontal
+          horizontal={flatListHorizontal}
           data={data}
           keyExtractor={keyExtractor}
           renderItem={renderItem}
         />
       </View>
+      <Divider />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  resultRowContainer: {
-    margin: 5,
-    padding: 5,
-    justifyContent: "center",
-  },
-  containerStyle: {
-    margin: 10,
-    padding: 10,
-  },
-});
 
 export default ResultRow;
