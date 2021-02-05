@@ -11,6 +11,14 @@
 
 ## Changes
 
+### 05/02/2021
+- Added new component: LocationQuickStats
+- Added new component: LocationRatingStats
+- ResultRow: logic and styling changes
+- ReviewCard: Added new reusable components, various logic and styling changes
+- AccountScreen: Updated props on components
+- LocationScreen: Added new reusable components, Code refactoring and styling changes
+
 ### 04/02/2021
 - App.js: Removed single comment
 - Updated various dependencies
