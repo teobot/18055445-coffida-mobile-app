@@ -6,10 +6,17 @@
 
 ### Issues
 #### All new issues with be moved to the issues page on GitHub
-- ~~fix app crash when user clicks on location that doesn't have review or ratings.~~
-- ~~fix the review card, its now in a horizontal flatlist so needs changing~~
 
 ## Changes
+
+### 08/02/2021
+- app.json: Added google maps api key
+- Updated dependencies
+- Added new component: OwnUserReviewView, displays users own review
+- Added new helper: LocationHelper, helps with location services
+- Added new component: LocationReviewScreen, the start of the user review edit/post screen
+- LocationScreen: Removed comments, Added google map view, added new OwnReviewView
+- SearchScreen: Removed unused imports
 
 ### 05/02/2021
 - Added new component: LocationQuickStats
@@ -68,3 +75,4 @@
 - https://source.unsplash.com/1600x900/?coffee,shop
 - https://www.npmjs.com/package/react-native-form-validator
 - https://console.cloud.google.com/apis/library/maps-android-backend.googleapis.com?authuser=3&folder=&organizationId=&project=enterpriseproject18055445
+- https://docs.expo.io/versions/latest/sdk/location/
