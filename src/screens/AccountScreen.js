@@ -19,6 +19,7 @@ import LoadingScreen from "../screens/LoadingScreen";
 import ResultRow from "../components/ResultRow";
 import ReviewCard from "../components/ReviewCard";
 import LocationCard from "../components/LocationCard";
+import CoffidaHelper from "../helpers/CoffidaHelper"
 
 const capitalize = (s) => {
   if (typeof s !== "string") return "";
@@ -33,21 +34,20 @@ const AccountScreen = ({ navigation }) => {
 
   useEffect(() => {
     const subs = navigation.addListener("didFocus", (payload) => {
-      getUserInformation();
+      updateUserInformation();
     });
     return () => {
       subs.remove();
     };
   }, []);
 
-  const getUserInformation = async () => {
+  const updateUserInformation = async () => {
     console.log("Get user information fired!");
     try {
-      const user_id = await AuthenticationHelper.id_Reducer({ type: "get_id" });
-      const response = await coffida.get(`/user/${user_id}`);
-      const { first_name } = response.data;
+      const userData = await CoffidaHelper.getUserInformation()
+      const { first_name } = userData;
       navigation.setParams({ title: first_name });
-      setUserInformation(response.data);
+      setUserInformation(userData);
     } catch (error) {
       // TODO: failed getting the user information, display error message here
     }
@@ -95,7 +95,7 @@ const AccountScreen = ({ navigation }) => {
             <Text style={styles.subTextStatStyle}>likes</Text>
           </View>
         </View>
-        <ResultRow
+        {/* <ResultRow
           title="My Reviews"
           containerMargin={5}
           containerPadding={5}
@@ -105,7 +105,7 @@ const AccountScreen = ({ navigation }) => {
           renderItem={({ item }) => {
             return <ReviewCard review={item.review} />;
           }}
-        />
+        /> */}
         <ResultRow
           title="My Favourites"
           containerMargin={5}
