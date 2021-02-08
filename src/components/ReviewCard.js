@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {
   View,
   Text,
@@ -9,11 +9,12 @@ import {
 } from "react-native";
 
 import { Avatar } from "react-native-elements";
-import { AntDesign } from "@expo/vector-icons";
 
 import LocationRatingStats from "../components/LocationRatingStats";
+import ReviewLikeButton from "./ReviewLikeButton";
 
-const ReviewCard = ({ review }) => {
+const ReviewCard = ({ review, location_id, getLocationInformation, user_information }) => {
+  const [likedReview, setLikedReview] = useState(false)
   const {
     clenliness_rating,
     likes,
@@ -48,7 +49,7 @@ const ReviewCard = ({ review }) => {
             paddingSpace={5}
             ratingRows={[
               {
-                title: "cleanliness",
+                title: "clean",
                 rating: clenliness_rating,
               },
               {
@@ -69,12 +70,7 @@ const ReviewCard = ({ review }) => {
             alignItems: "center",
           }}
         >
-          <AntDesign
-            style={{ alignSelf: "center" }}
-            name="heart"
-            size={30}
-            color="red"
-          />
+          <ReviewLikeButton user_information={user_information} getLocationInformation={getLocationInformation} review_id={review_id} location_id={location_id}/>
           <Text style={{ fontSize: 12, fontWeight: "bold" }}>{likes}</Text>
         </View>
       </View>
