@@ -40,7 +40,7 @@ const CreateAccountScreen = ({ navigation }) => {
   const [passwordVisible, setPasswordVisible] = useState(true);
 
   const createAccount = async (formData) => {
-    if (ValidationHelper.ValidateCreateAccountForm(formData)) {
+    if (ValidationHelper.IsObjectProfane(formData)) {
       // Something includes bad words
       // TODO: Bad words detected in the form data
       console.log("Bad words in the form data :(");
