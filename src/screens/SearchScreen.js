@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Button, FlatList } from "react-native";
+import { StyleSheet, FlatList } from "react-native";
 import { withNavigation } from "react-navigation";
 
 import coffida from "../api/coffida";
