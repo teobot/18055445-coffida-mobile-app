@@ -5,12 +5,12 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { withNavigation } from "react-navigation";
 
 const AccountButton = ({ navigation }) => {
-  const logout = () => {
+  const goToAccount = () => {
     navigation.navigate("Account");
   };
 
   return (
-    <TouchableOpacity onPress={() => logout()}>
+    <TouchableOpacity onPress={() => goToAccount()}>
       <MaterialCommunityIcons
         style={{ fontSize: 28, padding: 5, margin: 5, color: "black" }}
         name="account"
