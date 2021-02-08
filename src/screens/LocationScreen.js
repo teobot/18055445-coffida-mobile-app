@@ -27,21 +27,43 @@ import { Divider } from "react-native-elements";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 
 import LocationHelper from "../helpers/LocationHelper";
+import CoffidaHelper from "../helpers/CoffidaHelper";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const LocationScreen = ({ navigation }) => {
   const location_id = navigation.getParam("location_id");
+
   const [locationResult, setLocationResult] = useState(null);
+  const [userInformation, setUserInformation] = useState(null);
+
   const googleMap = useRef(null);
 
   useEffect(() => {
-    getLocationInformation(location_id);
+    const subs = navigation.addListener("didFocus", (payload) => {
+      getLocationInformation(location_id);
+      getUserInformation();
+    });
+    return () => {
+      subs.remove();
+    };
   }, []);
 
-  const getLocationInformation = async (id) => {
+  const getUserInformation = async () => {
+    // Return the user information
     try {
+      const userInformation = await CoffidaHelper.getUserInformation();
+      setUserInformation(userInformation);
+    } catch (error) {
+      // TODO: error getting user information
+    }
+  };
+
+  const getLocationInformation = async (id) => {
+    console.log("Location making call to get location information");
+    try {
+      getUserInformation()
       const response = await coffida.get(`/location/${id}`);
       setLocationResult(response.data);
     } catch (error) {
@@ -130,9 +152,12 @@ const LocationScreen = ({ navigation }) => {
           <Divider />
 
           <OwnUserReviewView
+            user_information={userInformation}
+            getLocationInformation={getLocationInformation}
             containerMargin={5}
             containerPadding={5}
             locationReviews={locationResult.location_reviews}
+            locationId={location_id}
           />
 
           <Divider />
@@ -143,7 +168,14 @@ const LocationScreen = ({ navigation }) => {
             containerPadding={5}
             flatListHorizontal={false}
             data={locationResult.location_reviews}
-            renderItem={({ item }) => <ReviewCard review={item} />}
+            renderItem={({ item }) => (
+              <ReviewCard
+                user_information={userInformation}
+                getLocationInformation={getLocationInformation}
+                location_id={locationResult.location_id}
+                review={item}
+              />
+            )}
             keyExtractor={(result) => "" + result.review_id}
           />
         </View>
