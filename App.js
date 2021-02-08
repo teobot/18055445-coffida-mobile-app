@@ -8,12 +8,16 @@ import LoginScreen from "./src/screens/LoginScreen";
 import SearchScreen from "./src/screens/SearchScreen";
 import LocationScreen from "./src/screens/LocationScreen";
 import AccountScreen from "./src/screens/AccountScreen";
+import LocationReviewScreen from "./src/screens/LocationReviewScreen"
 
 import LogoutButton from "./src/components/LogoutButton";
 import AccountButton from "./src/components/AccountButton";
 
 const navigator = createStackNavigator(
   {
+    Review: {
+      screen: LocationReviewScreen,
+    },
     Login: {
       screen: LoginScreen,
       navigationOptions: {
