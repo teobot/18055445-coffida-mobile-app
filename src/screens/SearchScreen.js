@@ -10,7 +10,12 @@ const SearchScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);
 
   useEffect(() => {
-    getResult();
+    const subs = navigation.addListener("didFocus", (payload) => {
+      getResult();
+    });
+    return () => {
+      subs.remove();
+    };
   }, []);
 
   const getResult = async () => {
