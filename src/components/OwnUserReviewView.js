@@ -6,12 +6,16 @@ import coffida from "../api/coffida";
 
 import ReviewCard from "../components/ReviewCard";
 import { Divider, Button } from "react-native-elements";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { withNavigation } from "react-navigation";
 
 const OwnUserReviewView = ({
   locationReviews,
   containerPadding,
   containerMargin,
+  navigation,
+  locationId,
+  user_information,
+  getLocationInformation,
 }) => {
   const [userReviewAlready, setUserReviewAlready] = useState(false);
   const [userReview, setUserReview] = useState(null);
@@ -20,27 +24,33 @@ const OwnUserReviewView = ({
     checkIfUserHasReviewed();
   }, [locationReviews]);
 
+  useEffect(() => {
+    checkIfUserHasReviewed();
+  }, [user_information]);
+
   const checkIfUserHasReviewed = async () => {
-    try {
-      const userId = await AuthenticationHelper.id_Reducer({ type: "get_id" });
-      const userInformation = await coffida.get("/user/" + userId);
-      const { reviews } = userInformation.data;
-      let USER_REVIEW = null;
-      for (let i = 0; i < locationReviews.length; i++) {
-        const location_review = locationReviews[i];
-        for (let j = 0; j < reviews.length; j++) {
-          const user_review = reviews[j].review;
-          if (location_review.review_id === user_review.review_id) {
-            // USER HAS REVIEWED THE CURRENT LOCATION
-            USER_REVIEW = user_review;
-            setUserReview(USER_REVIEW);
-            setUserReviewAlready(true);
-            break;
+    if(user_information !== null) {
+      try {
+        const { reviews } = user_information;
+        let USER_REVIEW = null;
+        for (let i = 0; i < locationReviews.length; i++) {
+          const location_review = locationReviews[i];
+          for (let j = 0; j < reviews.length; j++) {
+            const user_review = reviews[j].review;
+            if (location_review.review_id === user_review.review_id) {
+              // USER HAS REVIEWED THE CURRENT LOCATION
+              USER_REVIEW = user_review;
+              setUserReview(USER_REVIEW);
+              setUserReviewAlready(true);
+              break;
+            }
           }
         }
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
+    } else {
+      // TODO: user information is still loading on the parent view
     }
   };
   return (
@@ -58,8 +68,24 @@ const OwnUserReviewView = ({
         }}
       >
         <Text style={{ fontSize: 26, fontWeight: "bold" }}>Your Review</Text>
-        {userReview !== null ? <ReviewCard review={userReview} /> : null}
-        <Button title={userReview !== null ? "Edit Review" : "Post Review"} />
+        {userReview !== null ? (
+          <ReviewCard
+            user_information={user_information}
+            getLocationInformation={getLocationInformation}
+            location_id={locationId}
+            review={userReview}
+          />
+        ) : null}
+        <Button
+          onPress={() =>
+            navigation.navigate("Review", {
+              userReviewAlready,
+              userReview,
+              locationId,
+            })
+          }
+          title={userReview !== null ? "Edit Review" : "Post Review"}
+        />
       </View>
       <Divider />
     </View>
@@ -68,4 +94,4 @@ const OwnUserReviewView = ({
 
 const styles = StyleSheet.create({});
 
-export default OwnUserReviewView;
+export default withNavigation(OwnUserReviewView);
