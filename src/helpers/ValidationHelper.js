@@ -1,6 +1,9 @@
 import Filter from "bad-words";
 
+const filter = new Filter()
+
 export default class ValidationHelper {
+
   /**
    *This method returns TRUE if the given JSON object includes any bad words ELSE false
    *
@@ -9,8 +12,11 @@ export default class ValidationHelper {
    * @returns TRUE if the given JSON object includes no bad words, else FALSE
    * @memberof ValidationHelper
    */
-  static ValidateCreateAccountForm = (array) => {
-    const filter = new Filter();
+  static IsObjectProfane = (array) => {
     return filter.isProfane(JSON.stringify(array));
+  };
+
+  static RemoveBadWords = (payload) => {
+    return filter.clean(payload);
   };
 }
