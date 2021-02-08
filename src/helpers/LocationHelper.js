@@ -10,4 +10,5 @@ export default class LocationHelper {
     let location = await Location.getCurrentPositionAsync({});
     return location
   };
+
 }
