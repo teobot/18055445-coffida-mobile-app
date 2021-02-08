@@ -9,6 +9,23 @@
 
 ## Changes
 
+### 09/02/2021
+- Updated manifest
+- App.js: Added new create account page
+- AccountButton: Changed function name for accuracy
+- OwnUserReviewView: Changed logic, Updated for added ReviewCard props
+- RatingInput: Created new custom rating input
+- ReviewCard: Changed props access, Added review like button
+- ReviewLikeButton: Create new component, for liking user reviews
+- CoffidaHelper: Created new component to reduce duplicate code relate to the API
+- LocationHelper: Styling change
+- ValidationHelper: Changed logic, Create new function for cleaning strings
+- AccountScreen: Removed user reviews, Updated for CoffidaHelper use
+- CreateAccountScreen: Changed function name
+- LocationReviewScreen: Added new location review creation screen
+- LocationScreen: Added new onFocus listener, Updated ReviewCard props
+- SearchScreen: Added new onFocus listener
+
 ### 08/02/2021
 - app.json: Added google maps api key
 - Updated dependencies
