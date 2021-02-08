@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   View,
   Text,
@@ -20,45 +20,21 @@ import ReviewCard from "../components/ReviewCard";
 import LocationLikeButton from "../components/LocationLikeButton";
 import LocationQuickStats from "../components/LocationQuickStats";
 import LocationRatingStats from "../components/LocationRatingStats";
+import OwnUserReviewView from "../components/OwnUserReviewView";
 
 import { Divider } from "react-native-elements";
+
+import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
+
+import LocationHelper from "../helpers/LocationHelper";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-// "location_reviews": Array [
-//   Object {
-//     "clenliness_rating": 4,
-//     "likes": 2,
-//     "overall_rating": 4,
-//     "price_rating": 5,
-//     "quality_rating": 3,
-//     "review_body": "Great atomosphere, great coffee",
-//     "review_id": 1,
-//   },
-//   Object {
-//     "clenliness_rating": 3,
-//     "likes": 2,
-//     "overall_rating": 3,
-//     "price_rating": 3,
-//     "quality_rating": 3,
-//     "review_body": "Not as good now that they've upped their prices",
-//     "review_id": 3,
-//   },
-//   Object {
-//     "clenliness_rating": 4,
-//     "likes": 1,
-//     "overall_rating": 4,
-//     "price_rating": 5,
-//     "quality_rating": 3,
-//     "review_body": "Great atomosphere, great coffee",
-//     "review_id": 7,
-//   },
-// ],
-
 const LocationScreen = ({ navigation }) => {
   const location_id = navigation.getParam("location_id");
   const [locationResult, setLocationResult] = useState(null);
+  const googleMap = useRef(null);
 
   useEffect(() => {
     getLocationInformation(location_id);
@@ -84,7 +60,7 @@ const LocationScreen = ({ navigation }) => {
     <ScrollView>
       <LocationLikeButton id={location_id} />
 
-      <View style={{ flex: 1, height: windowWidth * 1.1 }}>
+      <View style={{ flex: 1 }}>
         <Image
           style={{ height: windowWidth * 1.1, width: windowWidth }}
           source={{
@@ -107,7 +83,6 @@ const LocationScreen = ({ navigation }) => {
             top: -10,
             borderTopEndRadius: 15,
             borderTopStartRadius: 15,
-            height: windowHeight * 2,
           }}
         >
           <LocationRatingStats
@@ -129,6 +104,38 @@ const LocationScreen = ({ navigation }) => {
           />
 
           <Divider />
+          <MapView
+            ref={googleMap}
+            provider={PROVIDER_GOOGLE}
+            style={{ height: 300 }}
+            showsUserLocation
+            followsUserLocation
+            region={{
+              latitude: locationResult.latitude,
+              longitude: locationResult.longitude,
+              latitudeDelta: 0.2,
+              longitudeDelta: 0.2,
+            }}
+          >
+            <Marker
+              key="1"
+              coordinate={{
+                latitude: locationResult.latitude,
+                longitude: locationResult.longitude,
+              }}
+              title={locationResult.location_name}
+            />
+          </MapView>
+
+          <Divider />
+
+          <OwnUserReviewView
+            containerMargin={5}
+            containerPadding={5}
+            locationReviews={locationResult.location_reviews}
+          />
+
+          <Divider />
 
           <ResultRow
             title="Reviews"
@@ -139,7 +146,6 @@ const LocationScreen = ({ navigation }) => {
             renderItem={({ item }) => <ReviewCard review={item} />}
             keyExtractor={(result) => "" + result.review_id}
           />
-
         </View>
       </View>
     </ScrollView>
