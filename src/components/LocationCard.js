@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import { withNavigation } from "react-navigation";
 
 const LocationCard = ({ item, navigation }) => {
@@ -16,7 +23,6 @@ const LocationCard = ({ item, navigation }) => {
       onPress={() =>
         navigation.navigate("Location", {
           location_id,
-          title: location_name,
         })
       }
     >
