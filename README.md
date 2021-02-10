@@ -13,6 +13,12 @@
 - App.js: Added new update user screen
 - LocationScreen: Updated navigation param
 - OwnUserReviewView: Fixed Logic issue
+- ResultRow: Removed props, Added children passthrough prop
+- ValidationHelper: Added validate input function
+- AccountScreen: Added update account information button, Changed imports, Updated ResultRow props
+- LocationReviewScreen: Added delete review button, Fixed imports
+- LocationScreen: Changed screen title logic, Update reviews props
+- UpdateUserInformationScreen: Added new screen, user information update
 
 ### 09/02/2021
 - Updated manifest
