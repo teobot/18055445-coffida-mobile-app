@@ -19,4 +19,13 @@ export default class ValidationHelper {
   static RemoveBadWords = (payload) => {
     return filter.clean(payload);
   };
+
+  static validateInput = ({type, payload}) => {
+    switch (type) {
+      case "validate_password":
+        this.RemoveBadWords(payload).length > 5
+      default:
+        return false;
+    }
+  }
 }
