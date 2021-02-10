@@ -29,7 +29,7 @@ const OwnUserReviewView = ({
   }, [user_information]);
 
   const checkIfUserHasReviewed = async () => {
-    if(user_information !== null) {
+    if (user_information !== null) {
       try {
         const { reviews } = user_information;
         let USER_REVIEW = null;
@@ -39,13 +39,15 @@ const OwnUserReviewView = ({
             const user_review = reviews[j].review;
             if (location_review.review_id === user_review.review_id) {
               // USER HAS REVIEWED THE CURRENT LOCATION
+              console.log("USER HAS REVIEW THE CURRENT LOCATION");
               USER_REVIEW = user_review;
-              setUserReview(USER_REVIEW);
-              setUserReviewAlready(true);
               break;
             }
           }
         }
+        // Set the user information if the user has review the location, 
+        setUserReview(USER_REVIEW);
+        setUserReviewAlready(USER_REVIEW !== null);
       } catch (error) {
         console.log(error);
       }
@@ -53,6 +55,7 @@ const OwnUserReviewView = ({
       // TODO: user information is still loading on the parent view
     }
   };
+
   return (
     <View
       style={{
