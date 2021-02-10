@@ -9,12 +9,16 @@ import SearchScreen from "./src/screens/SearchScreen";
 import LocationScreen from "./src/screens/LocationScreen";
 import AccountScreen from "./src/screens/AccountScreen";
 import LocationReviewScreen from "./src/screens/LocationReviewScreen"
+import UpdateUserInformationScreen from "./src/screens/UpdateUserInformationScreen"
 
 import LogoutButton from "./src/components/LogoutButton";
 import AccountButton from "./src/components/AccountButton";
 
 const navigator = createStackNavigator(
   {
+    UpdateUser: {
+      screen: UpdateUserInformationScreen
+    },
     Review: {
       screen: LocationReviewScreen,
     },
