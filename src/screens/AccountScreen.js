@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Button,
   Image,
   FlatList,
   Dimensions,
@@ -12,14 +11,13 @@ import {
 
 import { withNavigation } from "react-navigation";
 
-import coffida from "../api/coffida";
-import AuthenticationHelper from "../helpers/AuthenticationHelper";
+import { Button } from "react-native-elements";
 
 import LoadingScreen from "../screens/LoadingScreen";
 import ResultRow from "../components/ResultRow";
 import ReviewCard from "../components/ReviewCard";
 import LocationCard from "../components/LocationCard";
-import CoffidaHelper from "../helpers/CoffidaHelper"
+import CoffidaHelper from "../helpers/CoffidaHelper";
 
 const capitalize = (s) => {
   if (typeof s !== "string") return "";
@@ -44,12 +42,13 @@ const AccountScreen = ({ navigation }) => {
   const updateUserInformation = async () => {
     console.log("Get user information fired!");
     try {
-      const userData = await CoffidaHelper.getUserInformation()
+      const userData = await CoffidaHelper.getUserInformation();
       const { first_name } = userData;
       navigation.setParams({ title: first_name });
       setUserInformation(userData);
     } catch (error) {
       // TODO: failed getting the user information, display error message here
+      console.log(error);
     }
   };
 
@@ -95,28 +94,33 @@ const AccountScreen = ({ navigation }) => {
             <Text style={styles.subTextStatStyle}>likes</Text>
           </View>
         </View>
-        {/* <ResultRow
-          title="My Reviews"
-          containerMargin={5}
-          containerPadding={5}
-          flatListHorizontal={false}
-          data={userInformation.reviews}
-          keyExtractor={(review) => "" + review.review.review_id}
-          renderItem={({ item }) => {
-            return <ReviewCard review={item.review} />;
-          }}
-        /> */}
+
+        <View style={{ padding: 10, margin: 10 }}>
+          <Button
+            onPress={() =>
+              navigation.navigate("UpdateUser", {
+                userInformation,
+              })
+            }
+            type="outline"
+            title="Update Account"
+          />
+        </View>
+
         <ResultRow
           title="My Favourites"
           containerMargin={5}
           containerPadding={5}
-          flatListHorizontal={true}
-          data={userInformation.favourite_locations}
-          keyExtractor={(result) => `${result.location_id}`}
-          renderItem={({ item }) => {
-            return <LocationCard item={item} />;
-          }}
-        />
+        >
+          <FlatList
+            horizontal
+            data={userInformation.favourite_locations}
+            keyExtractor={(result) => `${result.location_id}`}
+            renderItem={({ item }) => {
+              return <LocationCard item={item} />;
+            }}
+          />
+        </ResultRow>
       </View>
     </ScrollView>
   );
