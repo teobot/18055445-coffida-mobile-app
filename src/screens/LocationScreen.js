@@ -63,8 +63,8 @@ const LocationScreen = ({ navigation }) => {
   const getLocationInformation = async (id) => {
     console.log("Location making call to get location information");
     try {
-      getUserInformation()
       const response = await coffida.get(`/location/${id}`);
+      navigation.setParams({ title: response.data.location_name });
       setLocationResult(response.data);
     } catch (error) {
       // TODO: error getting the location information
@@ -162,22 +162,17 @@ const LocationScreen = ({ navigation }) => {
 
           <Divider />
 
-          <ResultRow
-            title="Reviews"
-            containerMargin={5}
-            containerPadding={5}
-            flatListHorizontal={false}
-            data={locationResult.location_reviews}
-            renderItem={({ item }) => (
+          <ResultRow title="Reviews" containerMargin={5} containerPadding={5}>
+            {locationResult.location_reviews.map((item) => (
               <ReviewCard
+                key={item.review_id}
                 user_information={userInformation}
                 getLocationInformation={getLocationInformation}
                 location_id={locationResult.location_id}
                 review={item}
               />
-            )}
-            keyExtractor={(result) => "" + result.review_id}
-          />
+            ))}
+          </ResultRow>
         </View>
       </View>
     </ScrollView>
@@ -210,8 +205,15 @@ const styles = StyleSheet.create({
   },
 });
 
-LocationScreen.navigationOptions = (screenProps) => ({
-  headerTitle: screenProps.navigation.getParam("title"),
-});
+LocationScreen.navigationOptions = ({ navigation }) => {
+  const title = navigation.getParam("title");
+  if (title) {
+    return {
+      headerTitle: title,
+    };
+  } else {
+    return null;
+  }
+};
 
 export default withNavigation(LocationScreen);
