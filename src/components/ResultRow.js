@@ -4,11 +4,8 @@ import { Divider } from "react-native-elements";
 
 const ResultRow = ({
   title,
-  data,
-  keyExtractor,
-  renderItem,
+  children,
   style,
-  flatListHorizontal,
   containerPadding,
   containerMargin,
 }) => {
@@ -28,12 +25,7 @@ const ResultRow = ({
         }}
       >
         <Text style={{ fontSize: 26, fontWeight: "bold" }}>{title}</Text>
-        <FlatList
-          horizontal={flatListHorizontal}
-          data={data}
-          keyExtractor={keyExtractor}
-          renderItem={renderItem}
-        />
+        {children}
       </View>
       <Divider />
     </View>
