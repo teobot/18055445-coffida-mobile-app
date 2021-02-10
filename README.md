@@ -9,6 +9,11 @@
 
 ## Changes
 
+### 10/02/2021
+- App.js: Added new update user screen
+- LocationScreen: Updated navigation param
+- OwnUserReviewView: Fixed Logic issue
+
 ### 09/02/2021
 - Updated manifest
 - App.js: Added new create account page
