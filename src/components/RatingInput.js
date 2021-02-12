@@ -1,9 +1,6 @@
 import React from "react";
-import {
-  View,
-  Text,
-} from "react-native";
-import { Rating, Divider } from "react-native-elements";
+import { View, Text } from "react-native";
+import { Rating } from "react-native-elements";
 
 const RatingInput = ({ title, valueTitle, value, dispatcher }) => {
   return (
@@ -17,9 +14,8 @@ const RatingInput = ({ title, valueTitle, value, dispatcher }) => {
         showRating
         startingValue={value}
       />
-      <Divider />
     </View>
   );
 };
 
-export default RatingInput
+export default RatingInput;
