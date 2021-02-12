@@ -1,13 +1,24 @@
 # Coffida React Native Mobile App
 
-### To Add
-- [ ] Confirm password input from account creation
-- [x] have the login screen show loading while it tries to find if the user is already logged in
-
 ### Issues
 #### All new issues with be moved to the issues page on GitHub
 
 ## Changes
+
+### 12/02/2021
+- App.js: Added new Screen for image taking
+- Updated Dependencies
+- DeleteReview: Added new component for deleting a review
+- LogoutButton: Added post to "/user/logout" endpoint
+- OwnUserReview: Removed own review, Changed logic, Changed props, removed unused components
+- RatingInput: Removed Divider, Removed unused imports
+- ReviewCard: Fixed prop imports, Added review image and image viewer
+- ReviewLikeButton: Fixed prop imports, Changed likes and liked review logic, removed console log
+- ReviewPhotoCamera: Added new camera component
+- LocationReviewScreen: Added Review Image display/delete and update, Changed various logic and styling
+- LocationScreen: Changed onFocus logic, Changed various component props
+- ReviewImageScreen: Added new screen for taking images for the review
+- Updated version number
 
 ### 10/02/2021
 - App.js: Added new update user screen
@@ -104,3 +115,22 @@
 - https://www.npmjs.com/package/react-native-form-validator
 - https://console.cloud.google.com/apis/library/maps-android-backend.googleapis.com?authuser=3&folder=&organizationId=&project=enterpriseproject18055445
 - https://docs.expo.io/versions/latest/sdk/location/
+
+
+## Testing Functions
+```
+ const cal = ({ lat1, lon1 }, { lat2, lon2 }) => {
+   const R = 6371e3; // metres
+   const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
+   const φ2 = (lat2 * Math.PI) / 180;
+   const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+   const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+   const a =
+     Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+     Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+   return R * c;
+ };
+```
