@@ -5,64 +5,68 @@ import { AntDesign } from "@expo/vector-icons";
 import CoffidaHelper from "../helpers/CoffidaHelper";
 import coffida from "../api/coffida";
 
-const ReviewLikeButton = ({
-  review_id,
-  location_id,
-  getLocationInformation,
-  user_information
-}) => {
+const ReviewLikeButton = ({ location_id, user_information, review }) => {
   const [likedReview, setLikedReview] = useState(false);
+  const [likes, setLikes] = useState(review.likes);
 
   useEffect(() => {
-    if(user_information !== null) {
+    if (user_information !== null) {
       checkIfUserLikedReview();
     }
   }, [user_information]);
 
   const checkIfUserLikedReview = async () => {
     const { liked_reviews } = user_information;
+    let userLiked = false;
     for (let i = 0; i < liked_reviews.length; i++) {
       const liked = liked_reviews[i];
-      if (liked.review.review_id === review_id) {
-        setLikedReview(true);
+      if (liked.review.review_id === review.review_id) {
+        userLiked = true;
       }
     }
+    setLikedReview(userLiked);
   };
 
   const updateLike = async () => {
     // This submits the review to be liked
-    const payload = !likedReview
-    
+    const payload = !likedReview;
     setLikedReview(payload);
-
+    let response = null;
     try {
-      let response = null
-      if(payload) {
+      if (payload) {
         // : need to like the review
-        response = await coffida.post(`/location/${location_id}/review/${review_id}/like`)
+        response = await coffida.post(
+          `/location/${location_id}/review/${review.review_id}/like`
+        );
+        setLikes(likes + 1);
       } else {
         // : need to delete the review like
-        response = await coffida.delete(`/location/${location_id}/review/${review_id}/like`)
+        response = await coffida.delete(
+          `/location/${location_id}/review/${review.review_id}/like`
+        );
+        setLikes(likes - 1);
       }
     } catch (error) {
       // : failed updating information
-      setLikedReview(!payload)
-      return;
+      setLikedReview(!payload);
+      setLikes(review.likes);
     }
-
-    // update the information on the location page
-    getLocationInformation(location_id);
-    console.log(payload ? "USER LIKED THE REVIEW" : "USER REMOVED LIKE ON REVIEW");
   };
   return (
-    <TouchableOpacity onPress={() => updateLike()} style={{ alignSelf: "center" }}>
-      <AntDesign
+    <>
+      <TouchableOpacity
+        onPress={() => updateLike()}
         style={{ alignSelf: "center" }}
-        name={likedReview ? "heart" : "hearto"}
-        size={30}
-        color="red"
-      />
-    </TouchableOpacity>
+      >
+        <AntDesign
+          style={{ alignSelf: "center" }}
+          name={likedReview ? "heart" : "hearto"}
+          size={30}
+          color="red"
+        />
+      </TouchableOpacity>
+      <Text style={{ fontSize: 12, fontWeight: "bold" }}>{likes}</Text>
+    </>
   );
 };
 
