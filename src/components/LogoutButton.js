@@ -6,11 +6,19 @@ import { withNavigation } from "react-navigation";
 
 import AuthenticationHelper from "../helpers/AuthenticationHelper";
 
+import coffida from "../api/coffida"
+
 const LogoutButton = ({ navigation }) => {
   const logout = async () => {
-    await AuthenticationHelper.id_Reducer({ type: "delete_id" });
-    await AuthenticationHelper.token_Reducer({ type: "delete_token" });
-    navigation.navigate("Login");
+    try {
+      // Try to reach the logout endpoint
+      const response  = await coffida.post("/user/logout")
+      await AuthenticationHelper.id_Reducer({ type: "delete_id" });
+      await AuthenticationHelper.token_Reducer({ type: "delete_token" });
+      navigation.navigate("Login");
+    } catch (error) {
+      // TODO: failed logging out 
+    }
   };
 
   return (
