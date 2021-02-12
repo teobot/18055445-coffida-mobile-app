@@ -1,7 +1,12 @@
 # Coffida React Native Mobile App
 
-### Issues
-#### All new issues with be moved to the issues page on GitHub
+## Building
+- Run expo `build:android` or expo `build:ios`.
+
+
+## Issues
+
+### All new issues with be moved to the issues page on GitHub
 
 ## Changes
 
