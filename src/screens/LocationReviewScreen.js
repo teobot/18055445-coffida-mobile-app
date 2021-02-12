@@ -6,13 +6,16 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { Button, Overlay } from "react-native-elements";
+import { Button, Image, Avatar } from "react-native-elements";
 
 import { withNavigation } from "react-navigation";
 
+import DeleteReview from "../components/DeleteReview";
 import RatingInput from "../components/RatingInput";
 import ValidationHelper from "../helpers/ValidationHelper";
 import coffida from "../api/coffida";
@@ -35,7 +38,8 @@ const reducer = (state, action) => {
 };
 
 const LocationReviewScreen = ({ navigation }) => {
-  const { userReview, userReviewAlready, locationId } = navigation.state.params;
+  const { userReview, userReviewAlready, location_id } = navigation.state.params;
+  const [ReviewImage, setReviewImage] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [state, dispatch] = useReducer(reducer, {
     overall_rating: userReviewAlready ? userReview.overall_rating : 0,
@@ -44,6 +48,40 @@ const LocationReviewScreen = ({ navigation }) => {
     clenliness_rating: userReviewAlready ? userReview.clenliness_rating : 0,
     review_body: userReviewAlready ? userReview.review_body : "",
   });
+
+  useEffect(() => {
+    const didFocusListener = navigation.addListener("didFocus", (payload) => {
+      CheckIfReviewImageExists();
+    });
+    return () => {
+      didFocusListener.remove();
+    };
+  }, []);
+
+  const CheckIfReviewImageExists = async () => {
+    // Function returns review image if exists, otherwise doesn't render any images
+    try {
+      setReviewImage(null);
+      const image = await coffida.get(
+        `/location/${location_id}/review/${userReview.review_id}/photo`
+      );
+      console.log(image.request.responseURL);
+      setReviewImage(image.request.responseURL + "?time=" + new Date());
+    } catch (error) {
+      // Image does not exist
+    }
+  };
+
+  const handleReviewImageDelete = async () => {
+    // handle review image deletion
+    try {
+      const response = await coffida.delete(
+        `/location/${location_id}/review/${userReview.review_id}/photo`
+      );
+      console.log(response);
+      setReviewImage(null)
+    } catch (error) {}
+  };
 
   const handleSubmit = async () => {
     setDisableButton(true);
@@ -59,17 +97,17 @@ const LocationReviewScreen = ({ navigation }) => {
           if (userReviewAlready) {
             // PATCH, user already review,
             console.log(
-              `/location/${locationId}/review/${userReview.review_id}`
+              `/location/${location_id}/review/${userReview.review_id}`
             );
             response = await coffida.patch(
-              `/location/${locationId}/review/${userReview.review_id}`,
+              `/location/${location_id}/review/${userReview.review_id}`,
               state
             );
           } else {
             // POST, user hasn't sent a review before
-            console.log(`/location/${locationId}/review`);
+            console.log(`/location/${location_id}/review`);
             response = await coffida.post(
-              `/location/${locationId}/review`,
+              `/location/${location_id}/review`,
               state
             );
           }
@@ -96,6 +134,67 @@ const LocationReviewScreen = ({ navigation }) => {
 
   return (
     <ScrollView>
+      <View style={{ width: "100%", padding: 15, marginVertical: 5 }}>
+        <Text>
+          {userReviewAlready
+            ? "Your review image"
+            : "You need to review before adding images! :)"}
+        </Text>
+        {ReviewImage !== null ? (
+          <View style={{ alignItems: "center" }}>
+            <Image
+              source={{
+                uri: ReviewImage,
+              }}
+              style={{
+                width: Dimensions.get("window").width - 30,
+                maxWidth: Dimensions.get("window").width - 30,
+                maxHeight: 300,
+                height: 300,
+              }}
+              PlaceholderContent={<ActivityIndicator />}
+            />
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                width: "100%",
+                paddingTop: 5,
+              }}
+            >
+              <Button
+                onPress={() =>
+                  navigation.navigate("ReviewImage", {
+                    userReviewAlready,
+                    userReview,
+                    location_id,
+                  })
+                }
+                type="solid"
+                title="Update Image"
+              />
+              <Button onPress={handleReviewImageDelete} type="solid" title="Delete Image" />
+            </View>
+          </View>
+        ) : (
+          <Button
+            onPress={
+              userReviewAlready
+                ? () =>
+                    navigation.navigate("ReviewImage", {
+                      userReviewAlready,
+                      userReview,
+                      location_id,
+                    })
+                : null
+            }
+            disabled={!userReviewAlready}
+            type="solid"
+            title="Add Image"
+          />
+        )}
+      </View>
+
       <RatingInput
         title="Overall Rating"
         valueTitle="overall_rating"
@@ -146,63 +245,6 @@ const LocationReviewScreen = ({ navigation }) => {
   );
 };
 
-const DeleteReview = ({ navigation }) => {
-  const location_id = navigation.state.params.locationId;
-  const review_id = navigation.state.params.userReview.review_id;
-  const [overlay, setOverlay] = useState(false);
-
-  const handleReviewDelete = async () => {
-    // /location/{loc_id}/review/{rev_id}
-    try {
-      const response = await coffida.delete(
-        `/location/${location_id}/review/${review_id}`
-      );
-      if (response.status === 200) {
-        // Deletion was successful
-        navigation.navigate("Location", {
-          location_id,
-        });
-      } else {
-        // TODO: Deletion of the review has failed
-        console.log(response);
-      }
-    } catch (error) {
-      console.log(error);
-      // TODO: Deletion of the review networking has failed
-    }
-  };
-  return (
-    <TouchableOpacity style={{ padding: 10 }} onPress={() => setOverlay(true)}>
-      <Overlay isVisible={overlay}>
-        <View style={{ padding: 5, margin: 5 }}>
-          <Text>Are you sure you want to delete your review?</Text>
-        </View>
-        <View style={{ padding: 5, margin: 5, flexDirection: "row" }}>
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Button
-              raised
-              buttonStyle={styles.buttonStyle}
-              type="outline"
-              title="yes"
-              onPress={handleReviewDelete}
-            />
-          </View>
-          <View style={{ flex: 1, alignItems: "center" }}>
-            <Button
-              buttonStyle={styles.buttonStyle}
-              onPress={() => setOverlay(false)}
-              type="outline"
-              title="no"
-              raised
-            />
-          </View>
-        </View>
-      </Overlay>
-      <MaterialCommunityIcons name="delete-forever" size={36} color="black" />
-    </TouchableOpacity>
-  );
-};
-
 const styles = StyleSheet.create({
   inputStyle: {
     fontSize: 18,
@@ -211,16 +253,11 @@ const styles = StyleSheet.create({
     padding: 5,
     margin: 5,
   },
-  buttonStyle: {
-    padding: 5,
-    width: 100,
-    color: "red",
-  },
 });
 
 LocationReviewScreen.navigationOptions = ({ navigation }) => {
   if (
-    navigation.state.params.locationId !== null &&
+    navigation.state.params.location_id !== null &&
     navigation.state.params.userReview !== null
   ) {
     return {
