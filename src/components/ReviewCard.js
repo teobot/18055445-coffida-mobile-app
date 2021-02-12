@@ -1,34 +1,41 @@
-import React, {useEffect, useState} from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  Dimensions,
-  Image,
-} from "react-native";
+import React, { useEffect, useState, useContext } from "react";
+import { Dimensions } from "react-native";
+import { View, Text, StyleSheet, Modal, ActivityIndicator } from "react-native";
+import { Image, Avatar } from "react-native-elements";
 
-import { Avatar } from "react-native-elements";
+import ImageViewer from "react-native-image-zoom-viewer";
 
 import LocationRatingStats from "../components/LocationRatingStats";
 import ReviewLikeButton from "./ReviewLikeButton";
+import coffida from "../api/coffida";
+import { TouchableOpacity } from "react-native";
 
-const ReviewCard = ({ review, location_id, getLocationInformation, user_information }) => {
-  const [likedReview, setLikedReview] = useState(false)
-  const {
-    clenliness_rating,
-    likes,
-    overall_rating,
-    price_rating,
-    quality_rating,
-    review_body,
-    review_id,
-  } = review;
+const ReviewCard = ({ review, location_id, user_information }) => {
+  const [ReviewImage, setReviewImage] = useState(null);
+  const [ModelVisible, setModelVisible] = useState(false);
+
+  const CheckIfReviewImageExists = async () => {
+    // Function returns review image if exists, otherwise doesn't render any images
+    try {
+      const image = await coffida.get(
+        `/location/${location_id}/review/${review.review_id}/photo`
+      );
+      setReviewImage(image.request.responseURL + "?time=" + new Date());
+    } catch (error) {
+      // Image does not exist
+      setReviewImage(null);
+    }
+  };
+
+  useEffect(() => {
+    CheckIfReviewImageExists();
+  }, [user_information]);
+
   return (
     <View
       style={{
         width: "100%",
-        marginBottom: 20,
+        marginBottom: 40,
       }}
     >
       <View style={{ flex: 1, flexDirection: "row" }}>
@@ -40,7 +47,7 @@ const ReviewCard = ({ review, location_id, getLocationInformation, user_informat
             rounded
             title=" "
             source={{
-              uri: `https://source.unsplash.com/125x125/?profile,person?sig=${review_id}`,
+              uri: `https://source.unsplash.com/125x125/?profile,person?sig=${review.review_id}`,
             }}
           />
         </View>
@@ -50,19 +57,20 @@ const ReviewCard = ({ review, location_id, getLocationInformation, user_informat
             ratingRows={[
               {
                 title: "clean",
-                rating: clenliness_rating,
+                rating: review.clenliness_rating,
               },
               {
                 title: "price",
-                rating: price_rating,
+                rating: review.price_rating,
               },
               {
                 title: "quality",
-                rating: quality_rating,
+                rating: review.quality_rating,
               },
             ]}
           />
         </View>
+
         <View
           style={{
             flex: 1,
@@ -70,13 +78,37 @@ const ReviewCard = ({ review, location_id, getLocationInformation, user_informat
             alignItems: "center",
           }}
         >
-          <ReviewLikeButton user_information={user_information} getLocationInformation={getLocationInformation} review_id={review_id} location_id={location_id}/>
-          <Text style={{ fontSize: 12, fontWeight: "bold" }}>{likes}</Text>
+          <ReviewLikeButton
+            user_information={user_information}
+            location_id={location_id}
+            review={review}
+          />
         </View>
       </View>
 
+      {ReviewImage !== null ? (
+        <View style={{ paddingHorizontal: 10 }}>
+          <Modal visible={ModelVisible} transparent={true}>
+            <ImageViewer
+              enableSwipeDown
+              onSwipeDown={() => setModelVisible(false)}
+              imageUrls={[{ url: ReviewImage }]}
+            />
+          </Modal>
+          <TouchableOpacity onPress={() => setModelVisible(true)}>
+            <Image
+              source={{
+                uri: ReviewImage,
+              }}
+              style={{ width: Dimensions.get("window").width / 2, height: 120 }}
+              PlaceholderContent={<ActivityIndicator />}
+            />
+          </TouchableOpacity>
+        </View>
+      ) : null}
+
       <View style={{ flex: 1, padding: 10 }}>
-        <Text>{review_body}</Text>
+        <Text>{review.review_body}</Text>
       </View>
     </View>
   );
