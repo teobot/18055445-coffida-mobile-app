@@ -1,51 +1,43 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet } from "react-native";
-
-import AuthenticationHelper from "../helpers/AuthenticationHelper";
-import coffida from "../api/coffida";
-
-import ReviewCard from "../components/ReviewCard";
 import { Divider, Button } from "react-native-elements";
 import { withNavigation } from "react-navigation";
+import Icon from "react-native-vector-icons/FontAwesome";
 
 const OwnUserReviewView = ({
-  locationReviews,
-  containerPadding,
-  containerMargin,
-  navigation,
-  locationId,
+  locationResult,
   user_information,
-  getLocationInformation,
+  navigation,
 }) => {
   const [userReviewAlready, setUserReviewAlready] = useState(false);
   const [userReview, setUserReview] = useState(null);
-
-  useEffect(() => {
-    checkIfUserHasReviewed();
-  }, [locationReviews]);
+  const location_id = locationResult.location_id;
 
   useEffect(() => {
     checkIfUserHasReviewed();
   }, [user_information]);
+
+  useEffect(() => {
+    checkIfUserHasReviewed();
+  }, [locationResult]);
 
   const checkIfUserHasReviewed = async () => {
     if (user_information !== null) {
       try {
         const { reviews } = user_information;
         let USER_REVIEW = null;
-        for (let i = 0; i < locationReviews.length; i++) {
-          const location_review = locationReviews[i];
+        for (let i = 0; i < locationResult.location_reviews.length; i++) {
+          const location_review = locationResult.location_reviews[i];
           for (let j = 0; j < reviews.length; j++) {
             const user_review = reviews[j].review;
             if (location_review.review_id === user_review.review_id) {
-              // USER HAS REVIEWED THE CURRENT LOCATION
-              console.log("USER HAS REVIEW THE CURRENT LOCATION");
+              // The user has reviewed the location
               USER_REVIEW = user_review;
               break;
             }
           }
         }
-        // Set the user information if the user has review the location, 
+        // Set the user information if the user has review the location,
         setUserReview(USER_REVIEW);
         setUserReviewAlready(USER_REVIEW !== null);
       } catch (error) {
@@ -57,40 +49,28 @@ const OwnUserReviewView = ({
   };
 
   return (
-    <View
-      style={{
-        margin: containerMargin,
-        padding: containerPadding,
-      }}
-    >
-      <View
-        style={{
-          justifyContent: "center",
-          margin: containerMargin,
-          padding: containerPadding,
-        }}
-      >
-        <Text style={{ fontSize: 26, fontWeight: "bold" }}>Your Review</Text>
-        {userReview !== null ? (
-          <ReviewCard
-            user_information={user_information}
-            getLocationInformation={getLocationInformation}
-            location_id={locationId}
-            review={userReview}
+    <View style={{ padding: 15, margin: 15, justifyContent: "center" }}>
+      <Text style={{ fontSize: 26, fontWeight: "bold", marginBottom: 5 }}>
+        Your Review:
+      </Text>
+      <Button
+        icon={
+          <Icon
+            name={userReview !== null ? "edit" : "plus-circle"}
+            size={26}
+            color="white"
           />
-        ) : null}
-        <Button
-          onPress={() =>
-            navigation.navigate("Review", {
-              userReviewAlready,
-              userReview,
-              locationId,
-            })
-          }
-          title={userReview !== null ? "Edit Review" : "Post Review"}
-        />
-      </View>
-      <Divider />
+        }
+        onPress={() =>
+          navigation.navigate("Review", {
+            userReviewAlready,
+            userReview,
+            location_id,
+          })
+        }
+        disabled={user_information === null || locationResult === null}
+        title={userReview !== null ? "Edit Review" : "Post Review"}
+      />
     </View>
   );
 };
