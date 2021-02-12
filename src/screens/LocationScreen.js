@@ -1,15 +1,6 @@
-import React, { useEffect, useState, useRef } from "react";
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  Dimensions,
-  ScrollView,
-  FlatList,
-} from "react-native";
+import React, { useEffect, useState, createRef } from "react";
+import { View, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
 import { withNavigation } from "react-navigation";
-import { AntDesign } from "@expo/vector-icons";
 
 import coffida from "../api/coffida";
 
@@ -38,19 +29,24 @@ const LocationScreen = ({ navigation }) => {
   const [locationResult, setLocationResult] = useState(null);
   const [userInformation, setUserInformation] = useState(null);
 
-  const googleMap = useRef(null);
+  const googleMap = createRef();
 
   useEffect(() => {
     const subs = navigation.addListener("didFocus", (payload) => {
-      getLocationInformation(location_id);
-      getUserInformation();
+      UpdateInformation();
     });
     return () => {
       subs.remove();
     };
   }, []);
 
-  const getUserInformation = async () => {
+  const UpdateInformation = () => {
+    GetLocationInformation();
+    GetUserInformation();
+    LocationHelper.getLocation();
+  };
+
+  const GetUserInformation = async () => {
     // Return the user information
     try {
       const userInformation = await CoffidaHelper.getUserInformation();
@@ -60,10 +56,10 @@ const LocationScreen = ({ navigation }) => {
     }
   };
 
-  const getLocationInformation = async (id) => {
+  const GetLocationInformation = async () => {
     console.log("Location making call to get location information");
     try {
-      const response = await coffida.get(`/location/${id}`);
+      const response = await coffida.get(`/location/${location_id}`);
       navigation.setParams({ title: response.data.location_name });
       setLocationResult(response.data);
     } catch (error) {
@@ -126,6 +122,7 @@ const LocationScreen = ({ navigation }) => {
           />
 
           <Divider />
+
           <MapView
             ref={googleMap}
             provider={PROVIDER_GOOGLE}
@@ -153,11 +150,7 @@ const LocationScreen = ({ navigation }) => {
 
           <OwnUserReviewView
             user_information={userInformation}
-            getLocationInformation={getLocationInformation}
-            containerMargin={5}
-            containerPadding={5}
-            locationReviews={locationResult.location_reviews}
-            locationId={location_id}
+            locationResult={locationResult}
           />
 
           <Divider />
@@ -167,7 +160,6 @@ const LocationScreen = ({ navigation }) => {
               <ReviewCard
                 key={item.review_id}
                 user_information={userInformation}
-                getLocationInformation={getLocationInformation}
                 location_id={locationResult.location_id}
                 review={item}
               />
