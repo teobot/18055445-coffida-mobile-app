@@ -1,7 +1,7 @@
 # Coffida React Native Mobile App
 
 ## Building
-- Run expo `build:android` or expo `build:ios`.
+- Run `expo build:android` or `expo build:ios`.
 
 
 ## Issues
