@@ -5,13 +5,11 @@ import {
   StyleSheet,
   Text,
   ScrollView,
-  TouchableOpacity,
   Dimensions,
   ActivityIndicator,
 } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-import { Button, Image, Avatar } from "react-native-elements";
+import { Button, Image } from "react-native-elements";
 
 import { withNavigation } from "react-navigation";
 
@@ -19,6 +17,10 @@ import DeleteReview from "../components/DeleteReview";
 import RatingInput from "../components/RatingInput";
 import ValidationHelper from "../helpers/ValidationHelper";
 import coffida from "../api/coffida";
+
+import ImageHelper from "../helpers/ImageHelper";
+import * as Permissions from "expo-permissions";
+import * as ImagePicker from "expo-image-picker";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -38,7 +40,11 @@ const reducer = (state, action) => {
 };
 
 const LocationReviewScreen = ({ navigation }) => {
-  const { userReview, userReviewAlready, location_id } = navigation.state.params;
+  const {
+    userReview,
+    userReviewAlready,
+    location_id,
+  } = navigation.state.params;
   const [ReviewImage, setReviewImage] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const [state, dispatch] = useReducer(reducer, {
@@ -72,6 +78,40 @@ const LocationReviewScreen = ({ navigation }) => {
     }
   };
 
+  const takeImageHandler = async () => {
+    const CAMERA_PERMISSIONS = await Permissions.askAsync(Permissions.CAMERA);
+    const MEDIA_LIBRARY_PERMISSIONS = await Permissions.askAsync(
+      Permissions.MEDIA_LIBRARY
+    );
+
+    if (
+      CAMERA_PERMISSIONS.status !== "granted" &&
+      MEDIA_LIBRARY_PERMISSIONS.status !== "granted"
+    ) {
+      console.log("Hey! You have not enabled selected permissions");
+    } else {
+      const cameraImage = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [16, 9],
+        quality: 0.7,
+        base64: true,
+      });
+      postImage(cameraImage);
+    }
+  };
+
+  const postImage = async (image) => {
+    const response = await ImageHelper.onPictureSaved(
+      image,
+      location_id,
+      userReview.review_id
+    );
+    console.log(response);
+    if (response.status === "OK") {
+      await CheckIfReviewImageExists();
+    }
+  };
+
   const handleReviewImageDelete = async () => {
     // handle review image deletion
     try {
@@ -79,7 +119,7 @@ const LocationReviewScreen = ({ navigation }) => {
         `/location/${location_id}/review/${userReview.review_id}/photo`
       );
       console.log(response);
-      setReviewImage(null)
+      setReviewImage(null);
     } catch (error) {}
   };
 
@@ -163,31 +203,20 @@ const LocationReviewScreen = ({ navigation }) => {
               }}
             >
               <Button
-                onPress={() =>
-                  navigation.navigate("ReviewImage", {
-                    userReviewAlready,
-                    userReview,
-                    location_id,
-                  })
-                }
+                onPress={takeImageHandler}
                 type="solid"
                 title="Update Image"
               />
-              <Button onPress={handleReviewImageDelete} type="solid" title="Delete Image" />
+              <Button
+                onPress={handleReviewImageDelete}
+                type="solid"
+                title="Delete Image"
+              />
             </View>
           </View>
         ) : (
           <Button
-            onPress={
-              userReviewAlready
-                ? () =>
-                    navigation.navigate("ReviewImage", {
-                      userReviewAlready,
-                      userReview,
-                      location_id,
-                    })
-                : null
-            }
+            onPress={takeImageHandler}
             disabled={!userReviewAlready}
             type="solid"
             title="Add Image"
