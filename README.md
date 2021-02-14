@@ -16,6 +16,7 @@
 - Added new image helper
 - LocationReviewScreen: Moved taking images to the review screen
 - Updated version number
+- Removed unused screen
 
 ### 12/02/2021
 - App.js: Added new Screen for image taking
