@@ -10,6 +10,13 @@
 
 ## Changes
 
+### 14/02/2021
+- Updated dependencies
+- Deleted camera screen
+- Added new image helper
+- LocationReviewScreen: Moved taking images to the review screen
+- Updated version number
+
 ### 12/02/2021
 - App.js: Added new Screen for image taking
 - Updated Dependencies
