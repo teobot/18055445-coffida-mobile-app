@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, {
+  useState,
+  useEffect,
+  useReducer,
+  useRef,
+  useContext,
+} from "react";
 import { StyleSheet, FlatList, View, Picker } from "react-native";
 import { withNavigation } from "react-navigation";
 
@@ -7,9 +13,11 @@ import coffida from "../api/coffida";
 import LocationCard from "../components/LocationCard";
 import LoadingScreen from "../screens/LoadingScreen";
 
-import { SearchBar, Button, Text, Divider } from "react-native-elements";
+import { SearchBar, Button, Text, Divider, Badge } from "react-native-elements";
 
 import SearchRatingInput from "../components/SearchScreen/SearchRatingInput";
+import EndOfResultsView from "../components/SearchScreen/EndOfResultsView";
+import SearchPaginationButton from "../components/SearchScreen/SearchPaginationButton";
 
 const SearchParamsInitialState = {
   q: "",
@@ -47,11 +55,14 @@ const reducer = (state, action) => {
   }
 };
 
+import { Context as ThemeContext } from "../context/ThemeContext";
+
 const SearchScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);
   const [loadingResults, setLoadingResults] = useState(false);
   const [state, dispatch] = useReducer(reducer, SearchParamsInitialState);
   const [SearchOptionOpen, setSearchOptionOpen] = useState(false);
+  const { state: ThemeState } = useContext(ThemeContext);
 
   const SearchableRatings = [
     {
@@ -76,11 +87,21 @@ const SearchScreen = ({ navigation }) => {
     },
   ];
 
+  const useEffectLoaded = useRef(false);
+
   useEffect(() => {
     if (state === SearchParamsInitialState) {
       getResult();
     }
   }, [state]);
+
+  useEffect(() => {
+    if (useEffectLoaded.current) {
+      getResult();
+    } else {
+      useEffectLoaded.current = true;
+    }
+  }, [state.offset]);
 
   const getResult = async () => {
     setLoadingResults(true);
@@ -123,11 +144,12 @@ const SearchScreen = ({ navigation }) => {
         autoCapitalize="none"
         autoCorrect={false}
         onEndEditing={getResult}
-        lightTheme={true}
-        platform="ios"
+        onClear={() => dispatch({ type: "change_q", payload: "" })}
+        onCancel={() => dispatch({ type: "change_q", payload: "" })}
+        lightTheme={ThemeState.theme === "dark" ? false : true}
       />
       {SearchOptionOpen ? (
-        <View style={{ backgroundColor: "whitesmoke" }}>
+        <View style={{ backgroundColor: "white" }}>
           {SearchableRatings.map((item) => (
             <SearchRatingInput
               key={item.t}
@@ -135,7 +157,7 @@ const SearchScreen = ({ navigation }) => {
               valueTitle={item.vt}
               value={item.v}
               dispatcher={dispatch}
-              backgroundColor="whitesmoke"
+              backgroundColor="white"
             />
           ))}
 
@@ -200,16 +222,28 @@ const SearchScreen = ({ navigation }) => {
           JSON.stringify(SearchParamsInitialState) ? (
             <View
               style={{
-                position: "absolute",
-                top: 0,
+                ...styles.optionSideContainer,
                 right: 0,
-                bottom: 0,
-                justifyContent: "center",
-                alignItems: "center",
               }}
             >
-              <Text style={{ fontSize: 8, margin: 1 }}>
-                Custom Search Enabled
+              <Text style={styles.optionSideText}>Custom Search Enabled</Text>
+            </View>
+          ) : null}
+
+          {results !== null ? (
+            // If the results have loaded, show how many the user has returned
+            <View
+              style={{
+                ...styles.optionSideContainer,
+                left: 0,
+              }}
+            >
+              <Text style={styles.optionSideText}>
+                {loadingResults
+                  ? "Calculating"
+                  : `Loaded ${state.offset} ... ${
+                      state.offset + results.length
+                    } results`}
               </Text>
             </View>
           ) : null}
@@ -221,18 +255,39 @@ const SearchScreen = ({ navigation }) => {
           <LoadingScreen message="Loading results" />
         </View>
       ) : (
-        <FlatList
-          data={results}
-          keyExtractor={(result) => `${result.location_id}`}
-          renderItem={({ item }) => {
-            return <LocationCard item={item} />;
-          }}
-        />
+        <>
+          <FlatList
+            data={results}
+            keyExtractor={(result) => `${result.location_id}`}
+            ListFooterComponent={
+              <>
+                <EndOfResultsView />
+                <SearchPaginationButton
+                  state={state}
+                  results={results}
+                  dispatcher={dispatch}
+                />
+              </>
+            }
+            renderItem={({ item, index }) => {
+              return <LocationCard item={item} />;
+            }}
+          />
+        </>
       )}
     </>
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  optionSideContainer: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  optionSideText: { fontSize: 10, marginHorizontal: 5, paddingHorizontal: 5 },
+});
 
 export default withNavigation(SearchScreen);
