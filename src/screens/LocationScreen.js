@@ -8,14 +8,14 @@ import LoadingScreen from "../screens/LoadingScreen";
 
 import ResultRow from "../components/ResultRow";
 import ReviewCard from "../components/ReviewCard";
-import LocationLikeButton from "../components/LocationLikeButton";
-import LocationQuickStats from "../components/LocationQuickStats";
-import LocationRatingStats from "../components/LocationRatingStats";
+import LocationLikeButton from "../components/Location/LocationLikeButton";
+import LocationQuickStats from "../components/Location/LocationQuickStats";
+import LocationRatingStats from "../components/Location/LocationRatingStats";
 import OwnUserReviewView from "../components/OwnUserReviewView";
 
-import { Divider } from "react-native-elements";
+import { Divider, Text } from "react-native-elements";
 
-import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 
 import LocationHelper from "../helpers/LocationHelper";
 import CoffidaHelper from "../helpers/CoffidaHelper";
@@ -28,8 +28,17 @@ const LocationScreen = ({ navigation }) => {
 
   const [locationResult, setLocationResult] = useState(null);
   const [userInformation, setUserInformation] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [distanceToLocation, setDistanceToLocation] = useState(null);
 
   const googleMap = createRef();
+
+  useEffect(() => {
+    if (locationResult !== null) {
+      GetUserLocation();
+      GetDistanceToLocation();
+    }
+  }, [locationResult]);
 
   useEffect(() => {
     const subs = navigation.addListener("didFocus", (payload) => {
@@ -40,10 +49,22 @@ const LocationScreen = ({ navigation }) => {
     };
   }, []);
 
-  const UpdateInformation = () => {
+  const UpdateInformation = async () => {
     GetLocationInformation();
     GetUserInformation();
-    LocationHelper.getLocation();
+  };
+
+  const GetUserLocation = async () => {
+    const currentUserLocation = await LocationHelper.getLocation();
+    setUserLocation(currentUserLocation);
+  };
+
+  const GetDistanceToLocation = async () => {
+    const distance = await LocationHelper.getDistanceToCoords({
+      lat: locationResult.latitude,
+      long: locationResult.longitude,
+    });
+    setDistanceToLocation(distance);
   };
 
   const GetUserInformation = async () => {
@@ -128,12 +149,11 @@ const LocationScreen = ({ navigation }) => {
             provider={PROVIDER_GOOGLE}
             style={{ height: 300 }}
             showsUserLocation
-            followsUserLocation
             region={{
               latitude: locationResult.latitude,
               longitude: locationResult.longitude,
-              latitudeDelta: 0.2,
-              longitudeDelta: 0.2,
+              latitudeDelta: 0.15,
+              longitudeDelta: 0.15,
             }}
           >
             <Marker
@@ -144,8 +164,35 @@ const LocationScreen = ({ navigation }) => {
               }}
               title={locationResult.location_name}
             />
-          </MapView>
 
+            <Polyline
+              coordinates={[
+                {
+                  latitude: userLocation !== null ? locationResult.latitude : 0,
+                  longitude:
+                    userLocation !== null ? locationResult.longitude : 0,
+                },
+                {
+                  latitude:
+                    userLocation !== null ? userLocation.coords.latitude : 0,
+                  longitude:
+                    userLocation !== null ? userLocation.coords.longitude : 0,
+                },
+              ]}
+              strokeWidth={2}
+            />
+          </MapView>
+          <View style={{ width: "100%", padding: 5 }}>
+            <Text
+              style={{ fontSize: 14, fontWeight: "bold", alignSelf: "center", textDecorationLine: "underline" }}
+            >
+              {distanceToLocation !== null
+                ? `You are ${(distanceToLocation / 1000).toFixed(
+                    1
+                  )}km away from ${locationResult.location_name}`
+                : "Loading...."}
+            </Text>
+          </View>
           <Divider />
 
           <OwnUserReviewView
