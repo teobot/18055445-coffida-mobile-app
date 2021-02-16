@@ -5,14 +5,18 @@ import { Image, Avatar } from "react-native-elements";
 
 import ImageViewer from "react-native-image-zoom-viewer";
 
-import LocationRatingStats from "../components/Location/LocationRatingStats";
+import LocationRatingStats from "../Location/LocationRatingStats";
 import ReviewLikeButton from "./ReviewLikeButton";
-import coffida from "../api/coffida";
+import coffida from "../../api/coffida";
 import { TouchableOpacity } from "react-native";
+
+import { Context as ThemeContext } from "../../context/ThemeContext";
 
 const ReviewCard = ({ review, location_id, user_information }) => {
   const [ReviewImage, setReviewImage] = useState(null);
   const [ModelVisible, setModelVisible] = useState(false);
+
+  const { state, changeThemeMode } = useContext(ThemeContext);
 
   const CheckIfReviewImageExists = async () => {
     // Function returns review image if exists, otherwise doesn't render any images

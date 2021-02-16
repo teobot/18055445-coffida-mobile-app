@@ -2,8 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-import CoffidaHelper from "../helpers/CoffidaHelper";
-import coffida from "../api/coffida";
+import coffida from "../../api/coffida";
 
 const ReviewLikeButton = ({ location_id, user_information, review }) => {
   const [likedReview, setLikedReview] = useState(false);
