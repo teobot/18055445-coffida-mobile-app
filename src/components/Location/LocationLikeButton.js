@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
-import coffida from "../api/coffida";
-import AuthenticationHelper from "../helpers/AuthenticationHelper";
+import coffida from "../../api/coffida";
+import AuthenticationHelper from "../../helpers/AuthenticationHelper";
 
 const LocationLikeButton = ({ id }) => {
   const [favourited, setfavorited] = useState(false);
