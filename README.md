@@ -10,6 +10,21 @@
 
 ## Changes
 
+### 16/12/2021
+- Updated Dependencies
+- Coffida: Added timeout of 5000ms
+- Moved Components to new folders
+- RatingInput: Added extra customization
+- ReviewCard: Updated import paths
+- SearchRatingInput: Added new rating component
+- AuthenticationHelper: Refactored validationToken function, added console logs
+- LocationHelper: Added new getDistanceToCoords function
+- LocationReviewScreen: Removed console log
+- LocationScreen: Updated import paths, added map view polygon to user location, added new distance to location
+- LoginScreen: Removed console logs, added minor commas
+- SearchScreen: Added Searching within the search screen
+- updated version number
+
 ### 14/02/2021
 - Updated dependencies
 - Deleted camera screen
@@ -129,22 +144,3 @@
 - https://www.npmjs.com/package/react-native-form-validator
 - https://console.cloud.google.com/apis/library/maps-android-backend.googleapis.com?authuser=3&folder=&organizationId=&project=enterpriseproject18055445
 - https://docs.expo.io/versions/latest/sdk/location/
-
-
-## Testing Functions
-```
- const cal = ({ lat1, lon1 }, { lat2, lon2 }) => {
-   const R = 6371e3; // metres
-   const φ1 = (lat1 * Math.PI) / 180; // φ, λ in radians
-   const φ2 = (lat2 * Math.PI) / 180;
-   const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-   const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-
-   const a =
-     Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-     Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-   return R * c;
- };
-```
