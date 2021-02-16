@@ -7,11 +7,11 @@ import coffida from "../api/coffida";
 import LoadingScreen from "../screens/LoadingScreen";
 
 import ResultRow from "../components/ResultRow";
-import ReviewCard from "../components/ReviewCard";
+import ReviewCard from "../components/Review/ReviewCard";
 import LocationLikeButton from "../components/Location/LocationLikeButton";
 import LocationQuickStats from "../components/Location/LocationQuickStats";
 import LocationRatingStats from "../components/Location/LocationRatingStats";
-import OwnUserReviewView from "../components/OwnUserReviewView";
+import OwnUserReviewView from "../components/Review/OwnUserReviewView";
 
 import { Divider, Text } from "react-native-elements";
 
@@ -103,7 +103,7 @@ const LocationScreen = ({ navigation }) => {
         <Image
           style={{ height: windowWidth * 1.1, width: windowWidth }}
           source={{
-            uri: `https://source.unsplash.com/400x450/?coffee,shop?sig=${locationResult.location_id}`,
+            uri: locationResult.photo_path,
           }}
         />
         <LocationQuickStats
