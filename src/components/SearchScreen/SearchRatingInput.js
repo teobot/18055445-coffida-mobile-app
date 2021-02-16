@@ -22,6 +22,7 @@ const SearchRatingInput = ({
           }
           showRating={false}
           startingValue={value}
+          ratingBackgroundColor="whitesmoke"
         />
       </View>
     </View>
