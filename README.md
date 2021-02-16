@@ -10,7 +10,27 @@
 
 ## Changes
 
-### 16/12/2021
+### 16/02/2021
+- App.js: Added new Settings screen, Changed Logout to settings, Added context
+- Moved: OwnUserReviewView, ReviewCard, ReviewLikeButton inside of Review folder
+- LogoutButton: Replaced by settings button through user testing
+- LocationCard: Changed location image to database image, Removed comments
+- Added new SettingsButton to open settings screen
+- Added new EndOfResults View for the search screen
+- Added new SearchPaginationButton for searching for more results
+- SearchRatingInput: Added new background rating colour
+- Added new LogoutController function for logging out on setting screens
+- Added new ThemeController function for changing the theme on the settings screen
+- Created new createDataContext function to make creating React.Context easier with less code
+- Created new ThemeContext for controlling the theme
+- AccountScreen: Added back the review cards
+- LocationScreen: Updated import locations, Changed location screen image source
+- SearchScreen: Changed formatting, Added imports, Imported context, Changed search logic, Added searchBar functions, Added messages for showing search options, Added new styling
+- Added new Settings screen for changing app settings
+- Updated App version
+- Updated README
+
+### 15/12/2021
 - Updated Dependencies
 - Coffida: Added timeout of 5000ms
 - Moved Components to new folders
