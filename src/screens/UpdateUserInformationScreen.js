@@ -4,7 +4,7 @@ import { Text, Button, Input } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import { withNavigation } from "react-navigation";
-import coffida from "../api/coffida"
+import coffida from "../api/coffida";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -26,7 +26,7 @@ const UpdateUserInformationScreen = ({ navigation }) => {
     first_name,
     last_name,
     email,
-    user_id
+    user_id,
   } = navigation.state.params.userInformation;
 
   const [state, dispatch] = useReducer(reducer, {
@@ -38,22 +38,31 @@ const UpdateUserInformationScreen = ({ navigation }) => {
 
   const handleUpdate = async () => {
     let oldValues = { first_name, last_name, email, password: "" };
-    let newValues = state
-    let valuesToSend = {}
+    let newValues = state;
+    let valuesToSend = {};
 
     // check if any values have changed and if so add to the new object that gets sent
-    oldValues.first_name !== newValues.first_name ? valuesToSend.first_name = newValues.first_name : null
-    oldValues.last_name !== newValues.last_name ? valuesToSend.last_name = newValues.last_name : null
-    oldValues.email !== newValues.email ? valuesToSend.email = newValues.email : null
-    oldValues.password !== newValues.password ? valuesToSend.password = newValues.password : null
+    oldValues.first_name !== newValues.first_name
+      ? (valuesToSend.first_name = newValues.first_name)
+      : null;
+    oldValues.last_name !== newValues.last_name
+      ? (valuesToSend.last_name = newValues.last_name)
+      : null;
+    oldValues.email !== newValues.email
+      ? (valuesToSend.email = newValues.email)
+      : null;
+    oldValues.password !== newValues.password
+      ? (valuesToSend.password = newValues.password)
+      : null;
 
     // Only send if something has changed
-    if( Object.keys(valuesToSend).length > 0) {
+    if (Object.keys(valuesToSend).length > 0) {
       // Something has changed
       try {
-        const response = await coffida.patch(`/user/${user_id}`, valuesToSend)
-        if(response.status === 200) {
+        const response = await coffida.patch(`/user/${user_id}`, valuesToSend);
+        if (response.status === 200) {
           // The patch was successful
+          navigation.goBack();
         }
       } catch (error) {
         // TODO: failed patching the user information
@@ -62,7 +71,6 @@ const UpdateUserInformationScreen = ({ navigation }) => {
       // Nothing has changed
       // TODO: user clicked update information without sending anything, display message
     }
-
 
     console.log(valuesToSend);
   };
