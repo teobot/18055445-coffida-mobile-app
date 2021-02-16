@@ -27,6 +27,7 @@
 - LocationScreen: Updated import locations, Changed location screen image source
 - SearchScreen: Changed formatting, Added imports, Imported context, Changed search logic, Added searchBar functions, Added messages for showing search options, Added new styling
 - Added new Settings screen for changing app settings
+- UserInformationScreen: Applied Formatting, Pushes user back when updated
 - Updated App version
 - Updated README
 
