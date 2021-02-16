@@ -5,7 +5,7 @@ import { Image, Avatar } from "react-native-elements";
 
 import ImageViewer from "react-native-image-zoom-viewer";
 
-import LocationRatingStats from "../components/LocationRatingStats";
+import LocationRatingStats from "../components/Location/LocationRatingStats";
 import ReviewLikeButton from "./ReviewLikeButton";
 import coffida from "../api/coffida";
 import { TouchableOpacity } from "react-native";
