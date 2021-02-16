@@ -6,13 +6,13 @@ import coffida from "../api/coffida";
 
 import AuthenticationHelper from "../helpers/AuthenticationHelper";
 
-import LoadingScreen from "./LoadingScreen"
+import LoadingScreen from "./LoadingScreen";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("bashley.williams@mmu.ac.uk");
   const [password, setPassword] = useState("hello123");
 
-  const [showLoginLoader, setShowLoginLoader] = useState(true)
+  const [showLoginLoader, setShowLoginLoader] = useState(true);
 
   useEffect(() => {
     redirectIfLoggedIn();
@@ -34,8 +34,11 @@ const LoginScreen = ({ navigation }) => {
       navigation.navigate("Search");
     } else {
       // User does not have a valid token, ask them to login
+      // TODO: log the message on return to the user
+      console.log(validAccessToken.message);
+      console.log("Token is not valid.");
     }
-    setShowLoginLoader(false)
+    setShowLoginLoader(false);
   };
 
   const handleLogin = async (email, password) => {
@@ -60,14 +63,16 @@ const LoginScreen = ({ navigation }) => {
       // Login request failed
       if (error.response.status === "400") {
         // TODO: Bad login credentials
+        console.log(error.response.status);
       } else {
         // TODO: most likely networking issue
+        console.log(error.response.status);
       }
     }
   };
 
-  if(showLoginLoader) {
-    return <LoadingScreen message="Checking saved login credentials!"/>
+  if (showLoginLoader) {
+    return <LoadingScreen message="Checking saved login credentials!" />;
   }
 
   return (
