@@ -7,6 +7,7 @@ import {
   FlatList,
   Dimensions,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 
 import { withNavigation } from "react-navigation";
@@ -15,7 +16,7 @@ import { Button } from "react-native-elements";
 
 import LoadingScreen from "../screens/LoadingScreen";
 import ResultRow from "../components/ResultRow";
-import ReviewCard from "../components/ReviewCard";
+import ReviewCard from "../components/Review/ReviewCard";
 import LocationCard from "../components/LocationCard";
 import CoffidaHelper from "../helpers/CoffidaHelper";
 
@@ -108,7 +109,7 @@ const AccountScreen = ({ navigation }) => {
         </View>
 
         <ResultRow
-          title="My Favourites"
+          title="My Favorites"
           containerMargin={5}
           containerPadding={5}
         >
@@ -120,6 +121,25 @@ const AccountScreen = ({ navigation }) => {
               return <LocationCard item={item} />;
             }}
           />
+        </ResultRow>
+
+        <ResultRow title="My Reviews" containerMargin={5} containerPadding={5}>
+          {userInformation.reviews.map((item) => (
+            <TouchableOpacity
+              key={item.review.review_id}
+              onPress={() =>
+                navigation.navigate("Location", {
+                  location_id: item.location.location_id,
+                })
+              }
+            >
+              <ReviewCard
+                user_information={userInformation}
+                location_id={item.location.location_id}
+                review={item.review}
+              />
+            </TouchableOpacity>
+          ))}
         </ResultRow>
       </View>
     </ScrollView>
