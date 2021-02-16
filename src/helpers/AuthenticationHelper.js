@@ -64,8 +64,10 @@ export default class AuthenticationHelper {
   static setAsyncStorageItem = async ({ itemTitle, itemPayload }) => {
     try {
       await AsyncStorage.setItem(itemTitle, "" + itemPayload);
+      console.log("Saved item " + itemTitle + " successfully.");
     } catch (error) {
       // TODO: error setting the payload
+      console.log("Error setting the payload of " + itemTitle);
     }
   };
   /**
@@ -109,42 +111,54 @@ export default class AuthenticationHelper {
    * @memberof AuthenticationHelper
    */
   static validateAccessToken = async () => {
-    try {
-      // Test is the token is saved
-      const token = await this.token_Reducer({ type: "get_token" });
+    // This function validates the accessToken
+    const token = await this.token_Reducer({ type: "get_token" });
+    if (token === null) {
+      // Token is not in storage
+      return { valid: false, message: "Token is not in storage, login first." };
+    } else {
+      // Token is in storage but might not be valid
+      // Check if the server is online before asking for data,
       try {
-        // Token is in storage but we need to test if its valid
-        const response = await coffida.get("/find?limit=1", {
-          headers: {
-            "X-Authorization": token,
-          },
-        });
-        // Token exists in storage and returned back data so its valid
-        // Set the coffida axios instance to now always send the "X-Authorization" header with every request past here
-        coffida.defaults.headers.common["X-Authorization"] = token;
-        // Return back return meaning that token is valid
-        return {
-          message: "Token is valid",
-          valid: true,
-        };
+        await coffida.get("/", { timeout: 1000 });
+
+        // server is up, but we need to check the token validity
+        try {
+          // try to retrieve some small data
+          const d = await coffida.get("/find?limit=1", {
+            headers: {
+              "X-Authorization": token,
+            },
+          });
+          if (d.status === 200) {
+            // Token exists in storage and returned back data so its valid
+            // Set the coffida axios instance to now always send the "X-Authorization" header with every request past here
+            coffida.defaults.headers.common["X-Authorization"] = token;
+            // Return back return meaning that token is valid
+            return { valid: true, message: "Server is up and token is valid." };
+          } else {
+            // Server is up but token is not valid, delete the token and ask for login
+            await this.token_Reducer({ type: "delete_token" });
+            return {
+              valid: false,
+              message: "Token is not valid, please login again.",
+            };
+          }
+        } catch (error) {
+          // Error in the access token
+          // Token is most likely not valid
+          return {
+            valid: false,
+            message: "Token is not valid, please try again.",
+          };
+        }
       } catch (error) {
-        // Token is in storage but not valid, need to remove it and return false
-        console.log(
-          "Token is in storage but according to database it's not valid"
-        );
-        await this.token_Reducer({ type: "delete_token" });
+        // Server is down
         return {
-          message: "Token has changed, Login to continue!",
           valid: false,
+          message: "Server unavailable, please try again later.",
         };
       }
-    } catch (error) {
-      // Token is not in storage return false
-      console.log("Token is not in storage");
-      return {
-        message: "Please login :)",
-        valid: false,
-      };
     }
   };
 }
