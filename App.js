@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useState, useEffect } from "react";
 
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
@@ -10,12 +10,21 @@ import LocationScreen from "./src/screens/LocationScreen";
 import AccountScreen from "./src/screens/AccountScreen";
 import LocationReviewScreen from "./src/screens/LocationReviewScreen";
 import UpdateUserInformationScreen from "./src/screens/UpdateUserInformationScreen";
+import SettingsScreen from "./src/screens/SettingsScreen";
 
-import LogoutButton from "./src/components/LogoutButton";
+import SettingsButton from "./src/components/SettingsButton";
 import AccountButton from "./src/components/AccountButton";
+
+import { Provider as ThemeProvider } from "./src/context/ThemeContext";
 
 const navigator = createStackNavigator(
   {
+    Settings: {
+      screen: SettingsScreen,
+      navigationOptions: {
+        title: "Settings",
+      },
+    },
     UpdateUser: {
       screen: UpdateUserInformationScreen,
     },
@@ -34,20 +43,20 @@ const navigator = createStackNavigator(
       navigationOptions: {
         title: null,
         headerLeft: () => <AccountButton />,
-        headerRight: () => <LogoutButton />,
+        headerRight: () => <SettingsButton />,
       },
     },
     Location: {
       screen: LocationScreen,
       navigationOptions: {
-        headerRight: () => <LogoutButton />,
+        headerRight: () => <SettingsButton />,
       },
     },
     Account: {
       screen: AccountScreen,
       navigationOptions: {
         title: "Account Management",
-        headerRight: () => <LogoutButton />,
+        headerRight: () => <SettingsButton />,
       },
     },
   },
@@ -58,7 +67,14 @@ const navigator = createStackNavigator(
     },
   }
 );
-
 const AppContainer = createAppContainer(navigator);
 
-export default AppContainer;
+const App = () => {
+  return (
+    <ThemeProvider>
+      <AppContainer />
+    </ThemeProvider>
+  );
+};
+
+export default App;
