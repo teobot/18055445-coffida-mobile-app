@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React from "react";
 
 import { createAppContainer } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
@@ -15,8 +15,11 @@ import SettingsScreen from "./src/screens/SettingsScreen";
 import SettingsButton from "./src/components/SettingsButton";
 import AccountButton from "./src/components/AccountButton";
 
-import { Provider as ThemeProvider } from "./src/context/ThemeContext";
-
+import useThemeContext, { ThemeContext } from "./src/context/ThemeContext";
+import useToastContext, { ToastContext } from "./src/context/ToastContext";
+import useLocationContext, {
+  LocationContext,
+} from "./src/context/LocationContext";
 const navigator = createStackNavigator(
   {
     Settings: {
@@ -70,10 +73,18 @@ const navigator = createStackNavigator(
 const AppContainer = createAppContainer(navigator);
 
 const App = () => {
+  const [Theme, ThemeContextValue] = useThemeContext();
+  const [ToastComponent, ToastContextValue] = useToastContext();
+  const [location] = useLocationContext();
   return (
-    <ThemeProvider>
-      <AppContainer />
-    </ThemeProvider>
+    <ThemeContext.Provider value={ThemeContextValue}>
+      <LocationContext.Provider value={location}>
+        <ToastContext.Provider value={ToastContextValue}>
+          <AppContainer theme={Theme} />
+          {ToastComponent}
+        </ToastContext.Provider>
+      </LocationContext.Provider>
+    </ThemeContext.Provider>
   );
 };
 
