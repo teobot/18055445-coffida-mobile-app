@@ -1,34 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Button, Overlay } from "react-native-elements";
+
+import { ToastContext } from "../context/ToastContext";
 
 import coffida from "../api/coffida";
 
 const DeleteReview = ({ navigation }) => {
   const location_id = navigation.state.params.locationId;
   const review_id = navigation.state.params.userReview.review_id;
+  const { show404Toast, show500Toast, show200Toast } = useContext(ToastContext);
   const [overlay, setOverlay] = useState(false);
 
   const handleReviewDelete = async () => {
-    // /location/{loc_id}/review/{rev_id}
+    // Handle the deletion of the review
     try {
       const response = await coffida.delete(
         `/location/${location_id}/review/${review_id}`
       );
       if (response.status === 200) {
         // Deletion was successful
+        show200Toast("Review has been deleted");
         navigation.navigate("Location", {
           location_id,
         });
       } else {
-        // TODO: Deletion of the review has failed
-        console.log(response);
+        // : Deletion of the review has failed
+        show404Toast("Review could not be deleted");
       }
     } catch (error) {
-      console.log(error);
-      // TODO: Deletion of the review networking has failed
+      // : Deletion of the review networking has failed
+      show500Toast("Review could not be deleted");
     }
   };
   return (
