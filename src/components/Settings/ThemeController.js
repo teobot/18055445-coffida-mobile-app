@@ -2,10 +2,10 @@ import React, { useContext } from "react";
 import { Switch } from "react-native";
 import { ListItem, Icon } from "react-native-elements";
 
-import { Context as ThemeContext } from "../../context/ThemeContext";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const ThemeController = () => {
-  const { state, changeThemeMode } = useContext(ThemeContext);
+  const { Theme, changeTheme } = useContext(ThemeContext);
 
   return (
     <ListItem bottomDivider>
@@ -13,7 +13,7 @@ const ThemeController = () => {
       <ListItem.Content>
         <ListItem.Title>Dark mode</ListItem.Title>
       </ListItem.Content>
-      <Switch value={state.theme === "dark"} onValueChange={changeThemeMode} />
+      <Switch value={Theme === "dark"} onValueChange={changeTheme} />
     </ListItem>
   );
 };
