@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import { ListItem, Icon } from "react-native-elements";
 import AuthenticationHelper from "../../helpers/AuthenticationHelper";
 import coffida from "../../api/coffida";
 import { withNavigation } from "react-navigation";
+import { ToastContext } from "../../context/ToastContext";
 
 const LogoutController = ({ navigation }) => {
+  const { showBadInputToast } = useContext(ToastContext);
   const logout = async () => {
     try {
       // Try to reach the logout endpoint
@@ -13,7 +15,11 @@ const LogoutController = ({ navigation }) => {
       await AuthenticationHelper.token_Reducer({ type: "delete_token" });
       navigation.navigate("Login");
     } catch (error) {
-      // TODO: failed logging out
+      // : failed logging out
+      showBadInputToast({
+        topMessage: "Could not logout",
+        bottomMessage: "Please close the app and try again",
+      });
     }
   };
   return (
