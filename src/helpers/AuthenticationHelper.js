@@ -66,7 +66,7 @@ export default class AuthenticationHelper {
       await AsyncStorage.setItem(itemTitle, "" + itemPayload);
       console.log("Saved item " + itemTitle + " successfully.");
     } catch (error) {
-      // TODO: error setting the payload
+      // : error setting the payload
       console.log("Error setting the payload of " + itemTitle);
     }
   };
@@ -85,7 +85,7 @@ export default class AuthenticationHelper {
         return value;
       }
     } catch (error) {
-      // TODO: Error retrieving data
+      // : Error retrieving data
     }
     return null;
   };
@@ -100,7 +100,7 @@ export default class AuthenticationHelper {
     try {
       await AsyncStorage.removeItem(itemTitle);
     } catch (e) {
-      // TODO: error removing the given storage item
+      // : error removing the given storage item
     }
   };
   /**
