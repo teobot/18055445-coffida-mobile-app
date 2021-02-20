@@ -10,13 +10,13 @@ import ReviewLikeButton from "./ReviewLikeButton";
 import coffida from "../../api/coffida";
 import { TouchableOpacity } from "react-native";
 
-import { Context as ThemeContext } from "../../context/ThemeContext";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const ReviewCard = ({ review, location_id, user_information }) => {
   const [ReviewImage, setReviewImage] = useState(null);
   const [ModelVisible, setModelVisible] = useState(false);
 
-  const { state, changeThemeMode } = useContext(ThemeContext);
+  const { Theme } = useContext(ThemeContext);
 
   const CheckIfReviewImageExists = async () => {
     // Function returns review image if exists, otherwise doesn't render any images
@@ -104,7 +104,10 @@ const ReviewCard = ({ review, location_id, user_information }) => {
               source={{
                 uri: ReviewImage,
               }}
-              style={{ width: Dimensions.get("window").width / 2, height: 120 }}
+              style={{
+                width: Dimensions.get("window").width / 2,
+                aspectRatio: 16 / 9,
+              }}
               PlaceholderContent={<ActivityIndicator />}
             />
           </TouchableOpacity>
