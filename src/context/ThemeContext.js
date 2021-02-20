@@ -1,28 +1,21 @@
-import createDataContext from "./createDataContext";
+import { createContext, useState } from "react";
 
-// import into any child
-// import { Context as ThemeContext } from "../context/ThemeContext";
-// const { state, changeThemeMode } = useContext(ThemeContext);
+// INITIAL_THEME = "light" || "dark"
+const INITIAL_THEME = "light";
 
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "swap_theme":
-      return { ...state, theme: state.theme === "light" ? "dark" : "light" };
-    default:
-      return state;
-  }
-};
+// const { Theme, changeTheme } = useContext(ThemeContext);
+export const ThemeContext = createContext();
 
-const changeThemeMode = (dispatch) => {
-  return () => {
-    dispatch({ type: "swap_theme" });
+export default () => {
+  const [Theme, setTheme] = useState(INITIAL_THEME);
+
+  const changeTheme = () => {
+    if (Theme === "dark") {
+      setTheme("light");
+    } else {
+      setTheme("dark");
+    }
   };
-};
 
-export const { Context, Provider } = createDataContext(
-  reducer,
-  { changeThemeMode },
-  {
-    theme: "light",
-  }
-);
+  return [Theme, { Theme, changeTheme }];
+};
