@@ -10,7 +10,7 @@ const AccountButton = ({ navigation }) => {
   };
 
   return (
-    <TouchableOpacity onPress={() => goToAccount()}>
+    <TouchableOpacity onPress={goToAccount}>
       <MaterialCommunityIcons
         style={{ fontSize: 28, padding: 5, margin: 5, color: "black" }}
         name="account"
