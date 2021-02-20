@@ -1,5 +1,6 @@
-import AuthenticationHelper from "../helpers/AuthenticationHelper"
-import coffida from "../api/coffida"
+import AuthenticationHelper from "../helpers/AuthenticationHelper";
+import coffida from "../api/coffida";
+
 
 export default class CoffidaHelper {
   static getUserInformation = async () => {
@@ -9,8 +10,8 @@ export default class CoffidaHelper {
       const response = await coffida.get(`/user/${user_id}`);
       return response.data;
     } catch (error) {
-      // TODO: failed getting the user information, display error message here
-      console.log(error);
+      // : failed getting the user information, display error message here
+      return null;
     }
   };
 }
