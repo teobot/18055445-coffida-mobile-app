@@ -44,7 +44,7 @@ const OwnUserReviewView = ({
         console.log(error);
       }
     } else {
-      // TODO: user information is still loading on the parent view
+      // : user information is still loading on the parent view
     }
   };
 
