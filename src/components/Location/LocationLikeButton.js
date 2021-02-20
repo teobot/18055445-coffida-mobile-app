@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 import coffida from "../../api/coffida";
 import AuthenticationHelper from "../../helpers/AuthenticationHelper";
+import { ToastContext } from "../../context/ToastContext";
 
 const LocationLikeButton = ({ id }) => {
   const [favourited, setfavorited] = useState(false);
   const [loadedIfFavourited, setLoadedIfFavourited] = useState(false);
-
+  const {
+    showToast,
+    show404Toast,
+    show500Toast,
+    show200Toast,
+    showBadInputToast,
+    showGoodInputToast,
+  } = useContext(ToastContext);
   useEffect(() => {
     checkUserLikedLocation();
   }, [id]);
@@ -29,8 +37,11 @@ const LocationLikeButton = ({ id }) => {
         // try to favourite the location
         response = await coffida.post(url_location);
       } catch (error) {
-        // TODO: error setting the favourite on the location
-        console.log(error);
+        // : error setting the favourite on the location
+        showBadInputToast({
+          topMessage: "Issue with Like",
+          bottomMessage: "Liking location failed, try again later",
+        });
       }
     } else {
       // User wants to remove the favourite on the location
@@ -38,16 +49,19 @@ const LocationLikeButton = ({ id }) => {
         // Try to delete the favourite on location
         response = await coffida.delete(url_location);
       } catch (error) {
-        // TODO: error deleting the location favourite
-        console.log(error);
+        // : error deleting the location favourite
+        showBadInputToast({
+          topMessage: "Issue with Like",
+          bottomMessage: "Removing location like failed, try again later",
+        });
       }
     }
 
     if (response.status === 200) {
       // The post or deletion was successful
-      console.log(`The user ${payload ? "favourited" : "deleted the favourite on"} location ${id}.`);
     } else {
-      // TODO: Error on setting or deletion
+      // : Error on setting or deletion
+      show500Toast("Like failed, please try again later");
       setfavorited(favourited);
     }
   };
@@ -68,8 +82,8 @@ const LocationLikeButton = ({ id }) => {
       }
       setLoadedIfFavourited(true);
     } catch (error) {
-      // TODO: Error when getting the user id or the user information
-      console.log(error);
+      // : Error when getting the user id or the user information
+      show500Toast("Network issue, please check internet connection")
     }
   };
 
