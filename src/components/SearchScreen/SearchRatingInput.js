@@ -7,22 +7,23 @@ const SearchRatingInput = ({
   valueTitle,
   value,
   dispatcher,
-  backgroundColor,
+  imageSize,
 }) => {
+  const imageSizeValue = imageSize ? imageSize : 30;
   return (
     <View style={{ alignItems: "center" }}>
       <View style={{ padding: 5 }}>
         <Text>{title}</Text>
         <Rating
           type="custom"
-          tintColor={backgroundColor}
-          imageSize={30}
+          tintColor="#f2f2f2"
+          imageSize={imageSizeValue}
           onFinishRating={(newValue) =>
             dispatcher({ type: `change_${valueTitle}`, payload: newValue })
           }
           showRating={false}
           startingValue={value}
-          ratingBackgroundColor="whitesmoke"
+          ratingBackgroundColor="white"
         />
       </View>
     </View>
