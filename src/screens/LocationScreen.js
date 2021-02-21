@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createRef } from "react";
+import React, { useEffect, useState, createRef, useContext } from "react";
 import { View, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
 import { withNavigation } from "react-navigation";
 
@@ -14,11 +14,15 @@ import LocationRatingStats from "../components/Location/LocationRatingStats";
 import OwnUserReviewView from "../components/Review/OwnUserReviewView";
 
 import { Divider, Text } from "react-native-elements";
+import { getDistance } from "geolib";
 
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 
-import LocationHelper from "../helpers/LocationHelper";
 import CoffidaHelper from "../helpers/CoffidaHelper";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { LocationContext } from "../context/LocationContext";
+import { ToastContext } from "../context/ToastContext";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -28,17 +32,19 @@ const LocationScreen = ({ navigation }) => {
 
   const [locationResult, setLocationResult] = useState(null);
   const [userInformation, setUserInformation] = useState(null);
-  const [userLocation, setUserLocation] = useState(null);
-  const [distanceToLocation, setDistanceToLocation] = useState(null);
+
+  const { userLocation } = useContext(LocationContext);
+  const { Theme } = useContext(ThemeContext);
+  const {
+    showToast,
+    show404Toast,
+    show500Toast,
+    show200Toast,
+    showBadInputToast,
+    showGoodInputToast,
+  } = useContext(ToastContext);
 
   const googleMap = createRef();
-
-  useEffect(() => {
-    if (locationResult !== null) {
-      GetUserLocation();
-      GetDistanceToLocation();
-    }
-  }, [locationResult]);
 
   useEffect(() => {
     const subs = navigation.addListener("didFocus", (payload) => {
@@ -54,26 +60,14 @@ const LocationScreen = ({ navigation }) => {
     GetUserInformation();
   };
 
-  const GetUserLocation = async () => {
-    const currentUserLocation = await LocationHelper.getLocation();
-    setUserLocation(currentUserLocation);
-  };
-
-  const GetDistanceToLocation = async () => {
-    const distance = await LocationHelper.getDistanceToCoords({
-      lat: locationResult.latitude,
-      long: locationResult.longitude,
-    });
-    setDistanceToLocation(distance);
-  };
-
   const GetUserInformation = async () => {
     // Return the user information
     try {
       const userInformation = await CoffidaHelper.getUserInformation();
       setUserInformation(userInformation);
     } catch (error) {
-      // TODO: error getting user information
+      // : error getting user information
+      show500Toast("Please close the app and try again");
     }
   };
 
@@ -84,14 +78,14 @@ const LocationScreen = ({ navigation }) => {
       navigation.setParams({ title: response.data.location_name });
       setLocationResult(response.data);
     } catch (error) {
-      // TODO: error getting the location information
-      console.log(error);
+      // : error getting the location information
+      show500Toast("Please close the app and try again");
     }
   };
 
   if (locationResult === null) {
     // Location data is yet to return
-    // TODO: return some kind of splash screen or loading
+    // : return splash or loading screen
     return <LoadingScreen message="Gathering location information" />;
   }
 
@@ -166,31 +160,46 @@ const LocationScreen = ({ navigation }) => {
             />
 
             <Polyline
-              coordinates={[
-                {
-                  latitude: userLocation !== null ? locationResult.latitude : 0,
-                  longitude:
-                    userLocation !== null ? locationResult.longitude : 0,
-                },
-                {
-                  latitude:
-                    userLocation !== null ? userLocation.coords.latitude : 0,
-                  longitude:
-                    userLocation !== null ? userLocation.coords.longitude : 0,
-                },
-              ]}
+              coordinates={
+                userLocation !== null
+                  ? [
+                      {
+                        latitude: locationResult.latitude,
+                        longitude: locationResult.longitude,
+                      },
+                      {
+                        latitude: userLocation.coords.latitude,
+                        longitude: userLocation.coords.longitude,
+                      },
+                    ]
+                  : null
+              }
               strokeWidth={2}
             />
           </MapView>
           <View style={{ width: "100%", padding: 5 }}>
             <Text
-              style={{ fontSize: 14, fontWeight: "bold", alignSelf: "center", textDecorationLine: "underline" }}
+              style={{
+                fontSize: 14,
+                fontWeight: "bold",
+                alignSelf: "center",
+                textDecorationLine: "underline",
+              }}
             >
-              {distanceToLocation !== null
-                ? `You are ${(distanceToLocation / 1000).toFixed(
-                    1
-                  )}km away from ${locationResult.location_name}`
-                : "Loading...."}
+              {userLocation !== null
+                ? `You are ${`${(
+                    getDistance(
+                      {
+                        latitude: userLocation.coords.latitude,
+                        longitude: userLocation.coords.longitude,
+                      },
+                      {
+                        latitude: locationResult.latitude,
+                        longitude: locationResult.longitude,
+                      }
+                    ) / 1000
+                  ).toFixed(1)}KM`} away from ${locationResult.location_name}`
+                : null}
             </Text>
           </View>
           <Divider />
