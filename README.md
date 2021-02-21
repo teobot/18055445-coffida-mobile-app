@@ -14,25 +14,25 @@ I just had finished some validation for the update screen, login and create acco
 ## Changes
 
 ### 20/02/2021
-- Fixed "on cancel doesnt clear search" bug
-- Fixed "No rating background colour on the review ratings screen" enhancement
+- Fixed "on cancel doesn't clear search" bug
+- Fixed "No rating background color on the review rating screen" enhancement
 - Added "No results message on SearchScreen"
 - Fixed "Update account screen back to account" on account update places user back to account screen
-- Removed the logout button with account button
+- Removed the logout button with the account button
 - User can now see and filter by distance to the user
 - Fixed "user create account issue" issue
-- Added small description of app on login screen
+- Added small description of the app on the login screen
 - Fixed "Infinite loading screen if server not available" issue
 - App.js: Added new ThemeContext, ToastContext and UserLocationContext
 - Updated dependencies
-- LocationScreen: Moved to new folder, Refactored entire design
+- LocationScreen: Moved to the new folder, Refactored the entire design
 - AccountButton: Changed onPress function to use es6 javascript
 - DeleteReview: Imported ToastContext, Removed error logs to Toasts
 - LocationLikeButton: Imported ToastContext, Removed error logs to Toasts
 - OwnUserReviewView: Removed TODO, as it didn't require one
-- ReviewCard: Imported ToastContext, Removed error logs to Toasts, Changed image to new "aspectRation" styling
+- ReviewCard: Imported ToastContext, Removed error logs to Toasts, Changed image to new "aspectRatio" styling
 - EndOfResultsView: Created new End of results text, implemented dark mode
-- SearchRatingInput: Removed Background color prop, Added imageSize prop
+- SearchRatingInput: Removed Background color prop, Added image size prop
 - LogoutController: Imported ToastContext, Removed error logs to Toasts
 - ThemeController: Import ThemeContext, Added ability to change Theme prop in react.context
 - createDataContext: Deleted legacy component
@@ -41,16 +41,17 @@ I just had finished some validation for the update screen, login and create acco
 - ToastContext: Created new react context for handling global use of the toast component
 - AuthenticationHelper: Removed TODO where they weren't needed
 - CoffidaHelper: Removed console log on error and replaced with "return null"
-- ValidationHelper: Removed legacy form validation system, Replaced with new validation system
+- ValidationHelper: Removed legacy form validation system, Replaced with a new validation system
 - AccountScreen: Import new Contexts, Each new location gets a "distance" prop which is the distance from the user, Added error Toasts
 - CreateAccountScreen: Changed component imports, Changed reducer type names, Refactored account information validation, Added Toast messages, Redesign screen styling
-- LocationReviewScreen: Changed imports, added Toasts messages, Refactored legacy validation system, Changed rating and button styling
+- LocationReviewScreen: Changed imports, added Toasts messages, Refactored legacy validation system, Changed rating, and button styling
 - LocationScreen: Changed imports, Added Toast messages, Removed unused functions, Changed polygon line logic on map
-- LoginScreen: Changed imports, Refactored legacy validation system, Added Toasts messages, Refactored login screen styling
-- SearchScreen: Changed imports, Added Results sorting, Import Toast and Theme context, Refactored legacy param and distance calculating, Fixed clear params on cancel issue, Reduced duplicate code, Added new filter for sorting results
+- login screen: Changed imports, Refactored legacy validation system, Added Toasts messages, Refactored login screen styling
+- SearchScreen: Changed imports, Added Results sorting, Import Toast and Theme context, Refactored legacy param and distance calculating, Fixed clear params on cancel issue, Reduced duplicate code, Added a new filter for sorting results
 - UpdateUserInformationScreen: Changed imports, Refactored legacy validation system, Adde toast messages
 - Updated README
 - Updated App version
+
 
 ### 16/02/2021
 - App.js: Added new Settings screen, Changed Logout to settings, Added context
