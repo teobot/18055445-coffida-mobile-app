@@ -1,21 +1,25 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useContext } from "react";
 import {
   View,
-  TextInput,
   StyleSheet,
-  Text,
   ScrollView,
   Dimensions,
   ActivityIndicator,
 } from "react-native";
 
-import { Button, Image } from "react-native-elements";
+import { Button, Image, Text, Input } from "react-native-elements";
 
 import { withNavigation } from "react-navigation";
 
 import DeleteReview from "../components/DeleteReview";
 import RatingInput from "../components/RatingInput";
+import SearchRatingInput from "../components/SearchScreen/SearchRatingInput";
+
 import ValidationHelper from "../helpers/ValidationHelper";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { ToastContext } from "../context/ToastContext";
+
 import coffida from "../api/coffida";
 
 import ImageHelper from "../helpers/ImageHelper";
@@ -47,6 +51,7 @@ const LocationReviewScreen = ({ navigation }) => {
   } = navigation.state.params;
   const [ReviewImage, setReviewImage] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
+  const REVIEW_RATING_IMAGE_SIZE = 50;
   const [state, dispatch] = useReducer(reducer, {
     overall_rating: userReviewAlready ? userReview.overall_rating : 0,
     price_rating: userReviewAlready ? userReview.price_rating : 0,
@@ -54,6 +59,15 @@ const LocationReviewScreen = ({ navigation }) => {
     clenliness_rating: userReviewAlready ? userReview.clenliness_rating : 0,
     review_body: userReviewAlready ? userReview.review_body : "",
   });
+
+  const {
+    showToast,
+    show404Toast,
+    show500Toast,
+    show200Toast,
+    showBadInputToast,
+    showGoodInputToast,
+  } = useContext(ToastContext);
 
   useEffect(() => {
     const didFocusListener = navigation.addListener("didFocus", (payload) => {
@@ -71,10 +85,10 @@ const LocationReviewScreen = ({ navigation }) => {
       const image = await coffida.get(
         `/location/${location_id}/review/${userReview.review_id}/photo`
       );
-      console.log(image.request.responseURL);
       setReviewImage(image.request.responseURL + "?time=" + new Date());
     } catch (error) {
-      // Image does not exist
+      // Image does not exist but no need to
+      // do anything.
     }
   };
 
@@ -88,7 +102,10 @@ const LocationReviewScreen = ({ navigation }) => {
       CAMERA_PERMISSIONS.status !== "granted" &&
       MEDIA_LIBRARY_PERMISSIONS.status !== "granted"
     ) {
-      console.log("Hey! You have not enabled selected permissions");
+      showBadInputToast({
+        topMessage: "Permissions error",
+        bottomMessage: "Hey! You have not enabled selected permissions",
+      });
     } else {
       const cameraImage = await ImagePicker.launchCameraAsync({
         allowsEditing: true,
@@ -106,9 +123,12 @@ const LocationReviewScreen = ({ navigation }) => {
       location_id,
       userReview.review_id
     );
-    console.log(response);
     if (response.status === "OK") {
+      // Image posting status is successful
+      show200Toast("Image posted");
       await CheckIfReviewImageExists();
+    } else {
+      show404Toast("Image posting failed");
     }
   };
 
@@ -118,65 +138,71 @@ const LocationReviewScreen = ({ navigation }) => {
       const response = await coffida.delete(
         `/location/${location_id}/review/${userReview.review_id}/photo`
       );
-      console.log(response);
+      show200Toast("Image deleted");
       setReviewImage(null);
-    } catch (error) {}
+    } catch (error) {
+      show404Toast("Image could not be deleted");
+    }
   };
 
   const handleSubmit = async () => {
+    // This handles the review submission
     setDisableButton(true);
-    if (ValidationHelper.IsObjectProfane(state)) {
-      // TODO: Review information is profane
-    } else {
-      // Review information is clean
-      if (state.review_body.length > 10) {
-        // Review body is more than 10 characters we can post or patch
 
-        try {
-          let response = null;
-          if (userReviewAlready) {
-            // PATCH, user already review,
-            console.log(
-              `/location/${location_id}/review/${userReview.review_id}`
-            );
-            response = await coffida.patch(
-              `/location/${location_id}/review/${userReview.review_id}`,
-              state
-            );
-          } else {
-            // POST, user hasn't sent a review before
-            console.log(`/location/${location_id}/review`);
-            response = await coffida.post(
-              `/location/${location_id}/review`,
-              state
-            );
-          }
+    // Check if the review body is valid
+    const review_body_errors = ValidationHelper.validator({
+      type: "validate_review_body",
+      payload: state.review_body,
+    });
 
-          if (response.status === 200 || response.status === 201) {
-            // The review post or patch was successful
-            navigation.goBack();
-          } else {
-            // TODO: The post or patch was unsuccessful
-          }
-        } catch (error) {
-          // TODO: Error patching or posting review information
-          console.log(error);
-        }
-      } else {
-        // TODO: Review body is too short
-      }
+    if (review_body_errors !== undefined) {
+      // Review body has some errors need to tell user
+      console.log(review_body_errors);
+      showToast({
+        type: "error",
+        position: "top",
+        text1: "Review error",
+        text2: review_body_errors.review_body[0],
+        visibilityTime: 4000,
+        autoHide: true,
+      });
+      return;
     }
-
+    try {
+      // Post or patch the current location review
+      let response = null;
+      if (userReviewAlready) {
+        // The user has already reviewed so lets patch
+        response = await coffida.patch(
+          `/location/${location_id}/review/${userReview.review_id}`,
+          state
+        );
+      } else {
+        // The user has not posted a review, lets post this one
+        response = await coffida.post(`/location/${location_id}/review`, state);
+      }
+      if (response.status === 200 || response.status === 201) {
+        // The review post or patch was successful
+        show200Toast("Review was posted");
+        navigation.goBack();
+      } else {
+        // Bad request
+        show404Toast();
+      }
+    } catch (error) {
+      // Error within patching or posting review
+      show500Toast();
+    }
     setDisableButton(false);
   };
 
   return (
-    <ScrollView>
-      <View style={{ width: "100%", padding: 15, marginVertical: 5 }}>
-        <Text>
+    <ScrollView style={{ paddingHorizontal: 5, marginVertical: 25 }}>
+      <View style={{ padding: 30 }}>
+        <Text h4>
           {userReviewAlready
-            ? "Your review image"
-            : "You need to review before adding images! :)"}
+            ? "Your Review Image"
+            : "You need to review before adding images"}
         </Text>
         {ReviewImage !== null ? (
           <View style={{ alignItems: "center" }}>
@@ -185,10 +211,8 @@ const LocationReviewScreen = ({ navigation }) => {
                 uri: ReviewImage,
               }}
               style={{
-                width: Dimensions.get("window").width - 30,
-                maxWidth: Dimensions.get("window").width - 30,
-                maxHeight: 300,
-                height: 300,
+                width: "100%",
+                aspectRatio: 16 / 9,
               }}
               PlaceholderContent={<ActivityIndicator />}
             />
@@ -202,12 +226,12 @@ const LocationReviewScreen = ({ navigation }) => {
             >
               <Button
                 onPress={takeImageHandler}
-                type="solid"
+                type="outline"
                 title="Update Image"
               />
               <Button
                 onPress={handleReviewImageDelete}
-                type="solid"
+                type="outline"
                 title="Delete Image"
               />
             </View>
@@ -216,42 +240,46 @@ const LocationReviewScreen = ({ navigation }) => {
           <Button
             onPress={takeImageHandler}
             disabled={!userReviewAlready}
-            type="solid"
+            type="outline"
             title="Add Image"
           />
         )}
       </View>
 
-      <RatingInput
+      <SearchRatingInput
         title="Overall Rating"
         valueTitle="overall_rating"
         value={state.overall_rating}
         dispatcher={dispatch}
+        imageSize={REVIEW_RATING_IMAGE_SIZE}
       />
 
-      <RatingInput
+      <SearchRatingInput
         title="Price Rating"
         valueTitle="price_rating"
         value={state.price_rating}
         dispatcher={dispatch}
+        imageSize={REVIEW_RATING_IMAGE_SIZE}
       />
 
-      <RatingInput
+      <SearchRatingInput
         title="Quality Rating"
         valueTitle="quality_rating"
         value={state.quality_rating}
         dispatcher={dispatch}
+        imageSize={REVIEW_RATING_IMAGE_SIZE}
       />
 
-      <RatingInput
+      <SearchRatingInput
         title="Clenliness Rating"
         valueTitle="clenliness_rating"
         value={state.clenliness_rating}
         dispatcher={dispatch}
+        imageSize={REVIEW_RATING_IMAGE_SIZE}
       />
 
-      <View style={{ padding: 10, margin: 10, marginBottom: 100 }}>
-        <TextInput
+      <View style={{ padding: 5, margin: 5 }}>
+        <Input
           autoCapitalize="none"
           autoCorrect={false}
           value={state.review_body}
@@ -259,10 +287,15 @@ const LocationReviewScreen = ({ navigation }) => {
             dispatch({ type: "change_review_body", payload: newVal })
           }
           placeholder="Review"
-          style={styles.inputStyle}
+          style={{
+            fontSize: 18,
+            padding: 5,
+            margin: 5,
+          }}
         />
 
         <Button
+          type="outline"
           disabled={disableButton}
           title={userReviewAlready ? "Update" : "Post"}
           onPress={handleSubmit}
@@ -272,15 +305,7 @@ const LocationReviewScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  inputStyle: {
-    fontSize: 18,
-    borderColor: "black",
-    borderWidth: 2,
-    padding: 5,
-    margin: 5,
-  },
-});
+const styles = StyleSheet.create({});
 
 LocationReviewScreen.navigationOptions = ({ navigation }) => {
   if (
