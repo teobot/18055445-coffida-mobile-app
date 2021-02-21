@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   View,
   Text,
@@ -17,8 +17,14 @@ import { Button } from "react-native-elements";
 import LoadingScreen from "../screens/LoadingScreen";
 import ResultRow from "../components/ResultRow";
 import ReviewCard from "../components/Review/ReviewCard";
-import LocationCard from "../components/LocationCard";
+import LocationCard from "../components/Location/LocationCard";
 import CoffidaHelper from "../helpers/CoffidaHelper";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { LocationContext } from "../context/LocationContext";
+import { ToastContext } from "../context/ToastContext";
+
+import { getDistance } from "geolib";
 
 const capitalize = (s) => {
   if (typeof s !== "string") return "";
@@ -30,6 +36,9 @@ const windowHeight = Dimensions.get("window").height;
 
 const AccountScreen = ({ navigation }) => {
   const [userInformation, setUserInformation] = useState(null);
+  const { userLocation } = useContext(LocationContext);
+  const { Theme } = useContext(ThemeContext);
+  const { showBadInputToast } = useContext(ToastContext);
 
   useEffect(() => {
     const subs = navigation.addListener("didFocus", (payload) => {
@@ -43,13 +52,36 @@ const AccountScreen = ({ navigation }) => {
   const updateUserInformation = async () => {
     console.log("Get user information fired!");
     try {
-      const userData = await CoffidaHelper.getUserInformation();
+      let userData = await CoffidaHelper.getUserInformation();
       const { first_name } = userData;
       navigation.setParams({ title: first_name });
+      if (userLocation !== null) {
+        // We can give each location a distance to the user
+        userData.favourite_locations.forEach((location) => {
+          if (userLocation !== null) {
+            // add the location distance
+            location["distance"] = getDistance(
+              {
+                latitude: location.latitude,
+                longitude: location.longitude,
+              },
+              {
+                latitude: userLocation.coords.latitude,
+                longitude: userLocation.coords.longitude,
+              }
+            );
+          } else {
+            location["distance"] = null;
+          }
+        });
+      }
       setUserInformation(userData);
     } catch (error) {
-      // TODO: failed getting the user information, display error message here
-      console.log(error);
+      // : failed getting the user information, display error message here
+      showBadInputToast({
+        topMessage: "Networking issue",
+        bottomMessage: "Please close the app and try again",
+      });
     }
   };
 
