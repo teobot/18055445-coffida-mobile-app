@@ -10,14 +10,19 @@ import { withNavigation } from "react-navigation";
 
 import coffida from "../api/coffida";
 
-import LocationCard from "../components/LocationCard";
+import LocationCard from "../components/Location/LocationCard";
 import LoadingScreen from "../screens/LoadingScreen";
 
 import { SearchBar, Button, Text, Divider, Badge } from "react-native-elements";
+import { getDistance } from "geolib";
 
 import SearchRatingInput from "../components/SearchScreen/SearchRatingInput";
 import EndOfResultsView from "../components/SearchScreen/EndOfResultsView";
 import SearchPaginationButton from "../components/SearchScreen/SearchPaginationButton";
+
+import { ThemeContext } from "../context/ThemeContext";
+import { ToastContext } from "../context/ToastContext";
+import { LocationContext } from "../context/LocationContext";
 
 const SearchParamsInitialState = {
   q: "",
@@ -55,14 +60,28 @@ const reducer = (state, action) => {
   }
 };
 
-import { Context as ThemeContext } from "../context/ThemeContext";
-
 const SearchScreen = ({ navigation }) => {
   const [results, setResults] = useState([]);
+  const [resultSort, setResultSort] = useState({
+    sortBy: "location_name",
+    sortReverse: true,
+  });
+  const [Filters, setFilters] = useState([
+    { filterVar: "location_name", filterTitle: "Location Name" },
+    { filterVar: "distance", filterTitle: "Distance" },
+    { filterVar: "avg_overall_rating", filterTitle: "Overall Rating" },
+  ]);
   const [loadingResults, setLoadingResults] = useState(false);
   const [state, dispatch] = useReducer(reducer, SearchParamsInitialState);
   const [SearchOptionOpen, setSearchOptionOpen] = useState(false);
-  const { state: ThemeState } = useContext(ThemeContext);
+
+  const useEffectLoaded = useRef(false);
+
+  const { userLocation } = useContext(LocationContext);
+  const { show404Toast, show500Toast, showGoodInputToast } = useContext(
+    ToastContext
+  );
+  const { Theme } = useContext(ThemeContext);
 
   const SearchableRatings = [
     {
@@ -87,8 +106,6 @@ const SearchScreen = ({ navigation }) => {
     },
   ];
 
-  const useEffectLoaded = useRef(false);
-
   useEffect(() => {
     if (state === SearchParamsInitialState) {
       getResult();
@@ -103,6 +120,13 @@ const SearchScreen = ({ navigation }) => {
     }
   }, [state.offset]);
 
+  const SearchParamsHaveChanged = () => {
+    return (
+      JSON.stringify({ ...state, limit: 20, offset: 0 }) !==
+      JSON.stringify(SearchParamsInitialState)
+    );
+  };
+
   const getResult = async () => {
     setLoadingResults(true);
     setSearchOptionOpen(false);
@@ -116,13 +140,37 @@ const SearchScreen = ({ navigation }) => {
     }
 
     try {
-      const response = await coffida.get("/find?", {
+      let response = await coffida.get("/find?", {
         params: data,
       });
-      console.log(response.request.responseURL);
+      // We can give each location a distance to the user
+      response.data.forEach((location) => {
+        if (userLocation !== null) {
+          // add the location distance
+          location["distance"] = getDistance(
+            {
+              latitude: location.latitude,
+              longitude: location.longitude,
+            },
+            {
+              latitude: userLocation.coords.latitude,
+              longitude: userLocation.coords.longitude,
+            }
+          );
+        } else {
+          location["distance"] = null;
+        }
+      });
       setResults(response.data);
     } catch (error) {
-      // console.log(error);
+      // Search request failed
+      if (error.response.status === 400) {
+        // : Bad Request
+        show404Toast();
+      } else {
+        // : most likely networking issue
+        show500Toast();
+      }
     }
     setLoadingResults(false);
   };
@@ -144,12 +192,12 @@ const SearchScreen = ({ navigation }) => {
         autoCapitalize="none"
         autoCorrect={false}
         onEndEditing={getResult}
-        onClear={() => dispatch({ type: "change_q", payload: "" })}
-        onCancel={() => dispatch({ type: "change_q", payload: "" })}
-        lightTheme={ThemeState.theme === "dark" ? false : true}
+        onClear={() => dispatch({ type: "clear_params" })}
+        onClear={() => dispatch({ type: "clear_params" })}
+        lightTheme={Theme === "dark" ? false : true}
       />
       {SearchOptionOpen ? (
-        <View style={{ backgroundColor: "white" }}>
+        <View>
           {SearchableRatings.map((item) => (
             <SearchRatingInput
               key={item.t}
@@ -157,7 +205,6 @@ const SearchScreen = ({ navigation }) => {
               valueTitle={item.vt}
               value={item.v}
               dispatcher={dispatch}
-              backgroundColor="white"
             />
           ))}
 
@@ -172,7 +219,7 @@ const SearchScreen = ({ navigation }) => {
           >
             <Picker
               selectedValue={state.search_in}
-              onValueChange={(itemValue, itemIndex) =>
+              onValueChange={(itemValue) =>
                 dispatch({ type: "change_search_in", payload: itemValue })
               }
             >
@@ -213,13 +260,12 @@ const SearchScreen = ({ navigation }) => {
             type="clear"
             onPress={() => setSearchOptionOpen(!SearchOptionOpen)}
             title={
-              JSON.stringify(state) !== JSON.stringify(SearchParamsInitialState)
+              SearchParamsHaveChanged()
                 ? "Edit Search Options"
                 : "More Search Options"
             }
           />
-          {JSON.stringify(state) !==
-          JSON.stringify(SearchParamsInitialState) ? (
+          {SearchParamsHaveChanged() ? (
             <View
               style={{
                 ...styles.optionSideContainer,
@@ -249,6 +295,36 @@ const SearchScreen = ({ navigation }) => {
           ) : null}
         </View>
       )}
+      <View
+        style={{ flexDirection: "row", paddingVertical: 2, marginVertical: 2 }}
+      >
+        <Text style={{ ...styles.optionSideText, alignSelf: "center" }}>
+          Filter Results:
+        </Text>
+        <FlatList
+          horizontal
+          contentContainerStyle={{ flex: 1, justifyContent: "flex-start" }}
+          data={Filters}
+          keyExtractor={(filter) => filter.filterVar}
+          renderItem={({ item }) => {
+            return (
+              <Button
+                onPress={() =>
+                  setResultSort({
+                    ...Filters,
+                    sortBy: item.filterVar,
+                    sortReverse: !resultSort.sortReverse,
+                  })
+                }
+                titleStyle={{ fontSize: 8 }}
+                title={`By ${item.filterTitle}`}
+                type="outline"
+                containerStyle={{ marginHorizontal: 2 }}
+              />
+            );
+          }}
+        />
+      </View>
       <Divider />
       {loadingResults ? (
         <View style={{ flex: 1 }}>
@@ -257,11 +333,17 @@ const SearchScreen = ({ navigation }) => {
       ) : (
         <>
           <FlatList
-            data={results}
+            data={[...results].sort((a, b) => {
+              if (resultSort.sortReverse) {
+                return a[resultSort.sortBy] > b[resultSort.sortBy];
+              } else {
+                return a[resultSort.sortBy] < b[resultSort.sortBy];
+              }
+            })}
             keyExtractor={(result) => `${result.location_id}`}
             ListFooterComponent={
               <>
-                <EndOfResultsView />
+                <EndOfResultsView results={results} />
                 <SearchPaginationButton
                   state={state}
                   results={results}
