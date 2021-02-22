@@ -218,6 +218,7 @@ const SearchScreen = ({ navigation }) => {
             }}
           >
             <Picker
+              style={{color: Theme === "dark" ? "whitesmoke" : "#222222"}}
               selectedValue={state.search_in}
               onValueChange={(itemValue) =>
                 dispatch({ type: "change_search_in", payload: itemValue })
@@ -272,7 +273,7 @@ const SearchScreen = ({ navigation }) => {
                 right: 0,
               }}
             >
-              <Text style={styles.optionSideText}>Custom Search Enabled</Text>
+              <Text style={{...styles.optionSideText, color: Theme === "dark" ? "whitesmoke" : "#222222"}}>Custom Search Enabled</Text>
             </View>
           ) : null}
 
@@ -284,7 +285,7 @@ const SearchScreen = ({ navigation }) => {
                 left: 0,
               }}
             >
-              <Text style={styles.optionSideText}>
+              <Text style={{...styles.optionSideText, color: Theme === "dark" ? "whitesmoke" : "#222222"}}>
                 {loadingResults
                   ? "Calculating"
                   : `Loaded ${state.offset} ... ${
@@ -298,7 +299,7 @@ const SearchScreen = ({ navigation }) => {
       <View
         style={{ flexDirection: "row", paddingVertical: 2, marginVertical: 2 }}
       >
-        <Text style={{ ...styles.optionSideText, alignSelf: "center" }}>
+        <Text style={{ ...styles.optionSideText, alignSelf: "center", color: Theme === "dark" ? "whitesmoke" : "#222222" }}>
           Filter Results:
         </Text>
         <FlatList
