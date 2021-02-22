@@ -44,43 +44,20 @@ const CreateAccountScreen = ({ navigation }) => {
   const { showToast, show404Toast, show500Toast } = useContext(ToastContext);
 
   const handleAccountCreation = async () => {
-    const first_name_errors = ValidationHelper.validator({
-      type: "validate_first_name",
-      payload: state.first_name,
-    });
-    const last_name_errors = ValidationHelper.validator({
-      type: "validate_last_name",
-      payload: state.last_name,
-    });
-    const email_errors = ValidationHelper.validator({
-      type: "validate_email",
-      payload: state.email,
-    });
-    const password_errors = ValidationHelper.validator({
-      type: "validate_password",
-      payload: state.password,
+    const { first_name, last_name, email, password } = state;
+    const errors = ValidationHelper.validator({
+      first_name,
+      last_name,
+      email,
+      password,
     });
 
-    if (
-      first_name_errors !== undefined &&
-      last_name_errors !== undefined &&
-      email_errors !== undefined &&
-      password_errors !== undefined
-    ) {
+    if (errors !== undefined) {
       // Show of the user input has returned errors
       let error_message = "";
-      if (first_name_errors !== undefined) {
-        error_message += first_name_errors.first_name[0] + "\n";
-      }
-      if (last_name_errors !== undefined) {
-        error_message += last_name_errors.last_name[0] + "\n";
-      }
-      if (email_errors !== undefined) {
-        error_message += email_errors.email[0] + "\n";
-      }
-      if (password_errors !== undefined) {
-        error_message += password_errors.password[0];
-      }
+      errors.forEach(error => {
+        error_message += error + "\n"
+      });
       showToast({
         type: "error",
         position: "top",
@@ -95,7 +72,6 @@ const CreateAccountScreen = ({ navigation }) => {
     // all form information has returned with no errors
     try {
       const form_response = await coffida.post("/user", state);
-      console.log(form_response.status);
 
       if (form_response.status === 201) {
         showToast({
@@ -143,6 +119,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_first_name", payload: newVal })
             }
             placeholder="First name"
+            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
           />
         </View>
 
@@ -155,6 +132,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_last_name", payload: newVal })
             }
             placeholder="Last name"
+            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
           />
         </View>
 
@@ -167,6 +145,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_email", payload: newVal })
             }
             placeholder="Email"
+            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
           />
         </View>
 
@@ -180,6 +159,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_password", payload: newVal })
             }
             placeholder="Password"
+            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
           />
           <Icon
             onPress={() => setPasswordVisible(!passwordVisible)}
