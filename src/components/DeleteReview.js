@@ -5,6 +5,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Button, Overlay } from "react-native-elements";
 
 import { ToastContext } from "../context/ToastContext";
+import { ThemeContext } from "../context/ThemeContext";
 
 import coffida from "../api/coffida";
 
@@ -13,6 +14,7 @@ const DeleteReview = ({ navigation }) => {
   const review_id = navigation.state.params.userReview.review_id;
   const { show404Toast, show500Toast, show200Toast } = useContext(ToastContext);
   const [overlay, setOverlay] = useState(false);
+  const { Theme } = useContext(ThemeContext);
 
   const handleReviewDelete = async () => {
     // Handle the deletion of the review
@@ -64,7 +66,11 @@ const DeleteReview = ({ navigation }) => {
           </View>
         </View>
       </Overlay>
-      <MaterialCommunityIcons name="delete-forever" size={36} color="black" />
+      <MaterialCommunityIcons
+        name="delete-forever"
+        size={36}
+        color={Theme === "light" ? "#222222" : "whitesmoke"}
+      />
     </TouchableOpacity>
   );
 };
