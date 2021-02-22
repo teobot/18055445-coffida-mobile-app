@@ -68,6 +68,7 @@ const LocationReviewScreen = ({ navigation }) => {
     showBadInputToast,
     showGoodInputToast,
   } = useContext(ToastContext);
+  const { Theme } = useContext(ThemeContext);
 
   useEffect(() => {
     const didFocusListener = navigation.addListener("didFocus", (payload) => {
@@ -150,22 +151,23 @@ const LocationReviewScreen = ({ navigation }) => {
     setDisableButton(true);
 
     // Check if the review body is valid
-    const review_body_errors = ValidationHelper.validator({
-      type: "validate_review_body",
-      payload: state.review_body,
-    });
-
-    if (review_body_errors !== undefined) {
+    const { review_body } = state;
+    const errors = ValidationHelper.validator({ review_body });
+    if (errors !== undefined) {
       // Review body has some errors need to tell user
-      console.log(review_body_errors);
+      let error_message = "";
+      errors.forEach((error) => {
+        error_message += error + "\n";
+      });
       showToast({
         type: "error",
         position: "top",
         text1: "Review error",
-        text2: review_body_errors.review_body[0],
+        text2: error_message,
         visibilityTime: 4000,
         autoHide: true,
       });
+      setDisableButton(false);
       return;
     }
     try {
@@ -199,7 +201,10 @@ const LocationReviewScreen = ({ navigation }) => {
   return (
     <ScrollView style={{ paddingHorizontal: 5, marginVertical: 25 }}>
       <View style={{ padding: 30 }}>
-        <Text h4>
+        <Text
+          h4
+          style={{ color: Theme === "light" ? "#222222" : "whitesmoke" }}
+        >
           {userReviewAlready
             ? "Your Review Image"
             : "You need to review before adding images"}
@@ -292,6 +297,7 @@ const LocationReviewScreen = ({ navigation }) => {
             padding: 5,
             margin: 5,
           }}
+          inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
         />
 
         <Button
