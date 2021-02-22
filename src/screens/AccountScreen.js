@@ -50,7 +50,6 @@ const AccountScreen = ({ navigation }) => {
   }, []);
 
   const updateUserInformation = async () => {
-    console.log("Get user information fired!");
     try {
       let userData = await CoffidaHelper.getUserInformation();
       const { first_name } = userData;
@@ -93,6 +92,50 @@ const AccountScreen = ({ navigation }) => {
     return likes;
   };
 
+  const styles = StyleSheet.create({
+    statsViewContainer: {
+      marginTop: 15,
+      flexDirection: "row",
+    },
+    textStatStyle: {
+      fontSize: 20,
+      fontWeight: "bold",
+      alignSelf: "center",
+      color: Theme === "dark" ? "whitesmoke" : "#222222",
+    },
+    subTextStatStyle: {
+      fontSize: 13,
+      color: "grey",
+      alignSelf: "center",
+      color: Theme === "dark" ? "whitesmoke" : "#222222",
+    },
+    StatsTextViewContainer: {
+      flex: 1,
+      alignItems: "center",
+    },
+    mainContainerViewStyle: {
+      borderTopLeftRadius: 15,
+      borderTopRightRadius: 15,
+      paddingTop: 60,
+      backgroundColor: Theme === "light" ? "white" : "#222222",
+    },
+    profileImageStyle: {
+      height: 120,
+      width: 115,
+      alignSelf: "center",
+      borderRadius: 10,
+      marginTop: windowHeight * 0.15,
+      bottom: -50,
+      zIndex: 1,
+    },
+    UsernameTextStyle: {
+      alignSelf: "center",
+      fontSize: 28,
+      fontWeight: "bold",
+      color: Theme === "dark" ? "whitesmoke" : "#222222",
+    },
+  });
+
   if (userInformation === null) {
     // Loading screen here as the user information is yet to return
     return <LoadingScreen message="Loading account information" />;
@@ -108,11 +151,9 @@ const AccountScreen = ({ navigation }) => {
 
       <View style={styles.mainContainerViewStyle}>
         <View style={{ backgroundColor: "transparent" }}>
-          <Text
-            style={{ alignSelf: "center", fontSize: 28, fontWeight: "bold" }}
-          >{`${capitalize(userInformation.first_name)} ${capitalize(
-            userInformation.last_name
-          )}`}</Text>
+          <Text style={styles.UsernameTextStyle}>{`${capitalize(
+            userInformation.first_name
+          )} ${capitalize(userInformation.last_name)}`}</Text>
         </View>
 
         <View style={styles.statsViewContainer}>
@@ -177,42 +218,6 @@ const AccountScreen = ({ navigation }) => {
     </ScrollView>
   );
 };
-
-const styles = StyleSheet.create({
-  statsViewContainer: {
-    marginTop: 15,
-    flexDirection: "row",
-  },
-  textStatStyle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    alignSelf: "center",
-  },
-  subTextStatStyle: {
-    fontSize: 13,
-    color: "grey",
-    alignSelf: "center",
-  },
-  StatsTextViewContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-  mainContainerViewStyle: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    paddingTop: 60,
-  },
-  profileImageStyle: {
-    height: 120,
-    width: 115,
-    alignSelf: "center",
-    borderRadius: 10,
-    marginTop: windowHeight * 0.15,
-    bottom: -50,
-    zIndex: 1,
-  },
-});
 
 AccountScreen.navigationOptions = ({ navigation }) => {
   const name = navigation.getParam("title");
