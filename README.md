@@ -3,7 +3,7 @@ Created By: **Theo Jed Barber Clapperton**
 Written In: **React Native**  
 Student ID: **18055445**  
 Last Updated: **22/02/2021**  
-Version: **1.3.58**
+Version: **1.3.6**
 
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
@@ -16,6 +16,7 @@ Version: **1.3.58**
 ## Changes
 
 ### 22/02/2021
+- Implement a dark mode feature
 - Updated asset visuals
 - Removed unused dependencies
 - Removed unused txt files
