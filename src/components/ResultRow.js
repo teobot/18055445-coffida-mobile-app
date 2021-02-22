@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useContext } from "react";
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { Divider } from "react-native-elements";
+import { ThemeContext } from "../context/ThemeContext";
 
 const ResultRow = ({
   title,
@@ -9,6 +10,7 @@ const ResultRow = ({
   containerPadding,
   containerMargin,
 }) => {
+  const { Theme } = useContext(ThemeContext);
   return (
     <View
       style={{
@@ -24,7 +26,15 @@ const ResultRow = ({
           padding: containerPadding,
         }}
       >
-        <Text style={{ fontSize: 26, fontWeight: "bold" }}>{title}</Text>
+        <Text
+          style={{
+            fontSize: 26,
+            fontWeight: "bold",
+            color: Theme === "dark" ? "whitesmoke" : "#222222",
+          }}
+        >
+          {title}
+        </Text>
         {children}
       </View>
       <Divider />
