@@ -11,7 +11,6 @@ import { getDistance } from "geolib";
 import { withNavigation } from "react-navigation";
 import { Icon, Badge, Avatar } from "react-native-elements";
 
-import { LocationContext } from "../../context/LocationContext";
 import { ThemeContext } from "../../context/ThemeContext";
 
 const LocationCard = ({ item, navigation }) => {
@@ -24,8 +23,34 @@ const LocationCard = ({ item, navigation }) => {
     distance,
   } = item;
 
-  const { userLocation } = useContext(LocationContext);
   const { Theme } = useContext(ThemeContext);
+
+  const styles = StyleSheet.create({
+    imageStyle: {
+      aspectRatio: 16 / 9,
+      borderRadius: 10,
+      width: "100%",
+      alignSelf: "center",
+    },
+    locationNameText: {
+      fontWeight: "bold",
+      fontSize: 16,
+      color: Theme === "dark" ? "whitesmoke" : "#222222",
+    },
+    locationDetailsText: {
+      color: Theme === "dark" ? "whitesmoke" : "#222222",
+    },
+    container: {
+      margin: 15,
+    },
+    touchableContainer: {
+      flexDirection: "column",
+      paddingVertical: 2,
+      paddingHorizontal: 5,
+      margin: 5,
+      maxWidth: Dimensions.get("window").width,
+    },
+  });
 
   return (
     <TouchableOpacity
@@ -34,13 +59,7 @@ const LocationCard = ({ item, navigation }) => {
           location_id,
         })
       }
-      style={{
-        flexDirection: "column",
-        paddingVertical: 2,
-        paddingHorizontal: 5,
-        margin: 5,
-        maxWidth: Dimensions.get("window").width,
-      }}
+      style={styles.touchableContainer}
     >
       <View style={{ flex: 3 }}>
         <Image
@@ -60,7 +79,9 @@ const LocationCard = ({ item, navigation }) => {
             />
             <Badge
               status="primary"
-              value={`${(distance/1000).toFixed(1)}KM`}
+              value={`${(distance / 1000).toFixed(
+                distance / 1000 > 9999 ? 0 : 1
+              )}KM`}
               containerStyle={{
                 position: "absolute",
                 top: 0,
@@ -74,8 +95,8 @@ const LocationCard = ({ item, navigation }) => {
         ) : null}
       </View>
       <View style={{ flex: 1, paddingVertical: 5 }}>
-        <Text style={styles.name}>{location_name}</Text>
-        <Text>
+        <Text style={styles.locationNameText}>{location_name}</Text>
+        <Text style={styles.locationDetailsText}>
           {avg_overall_rating === null
             ? `Not yet rated`
             : `${avg_overall_rating.toFixed(1)} Stars`}
@@ -88,21 +109,5 @@ const LocationCard = ({ item, navigation }) => {
     </TouchableOpacity>
   );
 };
-
-const styles = StyleSheet.create({
-  imageStyle: {
-    aspectRatio: 16 / 9,
-    borderRadius: 10,
-    width: "100%",
-    alignSelf: "center",
-  },
-  name: {
-    fontWeight: "bold",
-    fontSize: 16,
-  },
-  container: {
-    margin: 15,
-  },
-});
 
 export default withNavigation(LocationCard);
