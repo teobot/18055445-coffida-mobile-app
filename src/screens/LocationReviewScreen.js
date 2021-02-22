@@ -12,7 +12,6 @@ import { Button, Image, Text, Input } from "react-native-elements";
 import { withNavigation } from "react-navigation";
 
 import DeleteReview from "../components/DeleteReview";
-import RatingInput from "../components/RatingInput";
 import SearchRatingInput from "../components/SearchScreen/SearchRatingInput";
 
 import ValidationHelper from "../helpers/ValidationHelper";
@@ -49,7 +48,7 @@ const LocationReviewScreen = ({ navigation }) => {
     userReviewAlready,
     location_id,
   } = navigation.state.params;
-  
+
   const [ReviewImage, setReviewImage] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const REVIEW_RATING_IMAGE_SIZE = 50;
