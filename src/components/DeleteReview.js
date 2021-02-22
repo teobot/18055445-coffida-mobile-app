@@ -11,6 +11,7 @@ import { ThemeContext } from "../context/ThemeContext";
 
 import coffida from "../api/coffida";
 
+// This is the delete button on the location review screen
 const DeleteReview = ({ navigation, location_id, review_id }) => {
   const { showBadInputToast, show500Toast, show200Toast } = useContext(
     ToastContext
