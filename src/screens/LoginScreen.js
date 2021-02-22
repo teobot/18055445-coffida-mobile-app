@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext, createRef } from "react";
 import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
-import { Button, Input, Text, Icon } from "react-native-elements";
+import { Button, Input, Text, Icon, Image } from "react-native-elements";
 import { withNavigation } from "react-navigation";
 
 import coffida from "../api/coffida";
@@ -20,7 +20,9 @@ const LoginScreen = ({ navigation }) => {
   // const [password, setPassword] = useState("");
   const [showLoginLoader, setShowLoginLoader] = useState(true);
   const { Theme } = useContext(ThemeContext);
-  const { showToast, show404Toast, show500Toast, show200Toast } = useContext(ToastContext);
+  const { showToast, show404Toast, show500Toast, show200Toast } = useContext(
+    ToastContext
+  );
 
   useEffect(() => {
     redirectIfLoggedIn();
@@ -44,32 +46,25 @@ const LoginScreen = ({ navigation }) => {
       // User does not have a valid token, ask them to login
       // : log the message on return to the user
       console.log(validAccessToken.message);
-      console.log("Token is not valid.");
     }
     setShowLoginLoader(false);
   };
 
   const handleLogin = async () => {
-    const email_errors = ValidationHelper.validator({
-      type: "validate_email",
-      payload: email,
-    });
-    const password_errors = ValidationHelper.validator({
-      type: "validate_password",
-      payload: password,
-    });
+    // user wants to login, but validate credentials first
+    const errors = ValidationHelper.validator({ email, password });
 
-    if (email_errors !== undefined && password_errors !== undefined) {
+    if (errors !== undefined) {
       // Password or email have return a error
+      let error_message = "";
+      errors.forEach((error) => {
+        error_message += error + "\n";
+      });
       showToast({
         type: "error",
         position: "top",
         text1: "Error with credentials",
-        text2: `${
-          password_errors !== undefined
-            ? password_errors.password[0] + "\n"
-            : null
-        }${email_errors !== undefined ? email_errors.email[0] : null}`,
+        text2: error_message,
         visibilityTime: 4000,
         autoHide: true,
       });
@@ -83,9 +78,9 @@ const LoginScreen = ({ navigation }) => {
         password: password,
       });
       // Login is successful
-      if(response.status === 200) {
+      if (response.status === 200) {
         // Show successful message to the user
-        show200Toast("Logging you in now :)")
+        show200Toast("Logging you in now :)");
       }
       const { id, token } = response.data;
       await AuthenticationHelper.token_Reducer({
@@ -124,27 +119,41 @@ const LoginScreen = ({ navigation }) => {
           Coffida is a coffee review and searching service
         </Text>
       </View>
+      <View style={{ flex: 2, justifyContent: "flex-start" }}>
+        <Image
+          style={{ height: "100%", aspectRatio: 16 / 9 }}
+          source={require("../images/coffeebackground.jpg")}
+        />
+      </View>
       <View
         style={{
-          flex: 1,
+          flex: 4,
           flexDirection: "column",
         }}
       >
-        <View style={{ flex: 5, justifyContent: "center" }}>
-          <Input
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={email}
-            onChangeText={(userEmail) => setEmail(userEmail)}
-            placeholder="Email"
-          />
-          <Input
-            autoCapitalize="none"
-            autoCorrect={false}
-            value={password}
-            onChangeText={(userPassword) => setPassword(userPassword)}
-            placeholder="Password"
-          />
+        <View style={{ flex: 5, justifyContent: "center", paddingVertical: 15 }}>
+          <View>
+            <Input
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={email}
+              onChangeText={(userEmail) => setEmail(userEmail)}
+              placeholder="Email"
+              inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+            />
+          </View>
+          <View style={{flexDirection: "row"}}>
+            <Input
+              autoCapitalize="none"
+              autoCorrect={false}
+              value={password}
+              secureTextEntry={true}
+              onChangeText={(userPassword) => setPassword(userPassword)}
+              placeholder="Password"
+              inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+            />
+
+          </View>
         </View>
         <View
           style={{
