@@ -1,17 +1,51 @@
 # Coffida React Native Mobile App
+Created By: **Theo Jed Barber Clapperton**  
+Written In: **React Native**  
+Student ID: **18055445**  
+Last Updated: **22/02/2021**  
+Version: **1.3.58**
 
-I just had finished some validation for the update screen, login and create account.
-
+![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
 ## Building
 - Run `expo build:android` or `expo build:ios`.
 
-
 ## Issues
-
-### All new issues with be moved to the issues page on GitHub
+- All new issues with be moved to the [issues page](https://github.com/teobot/rn-coffida/issues) on GitHub
 
 ## Changes
+
+### 22/02/2021
+- Updated asset visuals
+- Removed unused dependencies
+- Removed unused txt files
+- Added new background images
+- AccountButton: Added ThemeContext import, Added dynamic text color
+- DeleteReview: Import ThemeContext import, Added dynamic color changing
+- ResultRow: Import ThemeContext import, Added dynamic color changing
+- SettingsButton: Import ThemeContext import, Added dynamic color changing
+- LocationCard: Import ThemeContext import, Added dynamic color changing, Moved styles
+- LocationRatingStats: Import ThemeContext import, Added dynamic color changing, Moved styles
+- OwnUserReviewView: Import ThemeContext import, Added dynamic color changing, Moved styles
+- ReviewCard: Added dynamic text color styling
+- ReviewLikeButton: Import ThemeContext import, Added dynamic color changing
+- SearchRatingInput: Import ThemeContext import, Added dynamic color changing
+- LogoutController: Import ThemeContext import, Added dynamic color changing
+- ThemeController: Import ThemeContext import, Added dynamic color changing
+- ThemeContext: Set the initial theme to match the theme of the device
+- AuthenticationHelper: Removed comments
+- CoffidaHelper: Removed comments
+- ValidationHelper: Removed unused functions, Refactored validation function, Added banned terms for the review body
+- AccountScreen: Import ThemeContext import, Added dynamic color changing, Moved styles, Removed comments
+- CreateAccountScreen: Refactored form validation, Import ThemeContext import, Added dynamic color changing, Moved styles
+- LoadingScreen: Import ThemeContext import, Added dynamic color changing
+- LocationReviewScreen: Import ThemeContext import, Added dynamic color changing, Refactored validation
+- LocationScreen: Added dynamic color changing, Removed comments
+- LocationScreen: Removed comment, Refactored validation, Added image, Added theme colour changing
+- SearchScreen: Added dynamic color changing
+- UpdateUserInformationScreen: Added comments, Refactored validation, Added dynamic color changing
+- Updated README
+- Updated version
 
 ### 20/02/2021
 - Fixed "on cancel doesn't clear search" bug
