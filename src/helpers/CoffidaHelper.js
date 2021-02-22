@@ -4,7 +4,6 @@ import coffida from "../api/coffida";
 
 export default class CoffidaHelper {
   static getUserInformation = async () => {
-    console.log("Get user information fired!");
     try {
       const user_id = await AuthenticationHelper.id_Reducer({ type: "get_id" });
       const response = await coffida.get(`/user/${user_id}`);
