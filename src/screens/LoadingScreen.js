@@ -1,19 +1,31 @@
-import React from "react";
-import { View, Text, StyleSheet, ActivityIndicator, Dimensions } from "react-native";
-import ClipLoader from "react-spinners/ClipLoader";
-const LoadingScreen = ({message}) => {
+import React, { useContext } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  Dimensions,
+} from "react-native";
+import { ThemeContext } from "../context/ThemeContext";
+const LoadingScreen = ({ message }) => {
+  const { Theme } = useContext(ThemeContext);
   return (
     <View
       style={{
         flex: 1,
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: "white",
+        backgroundColor: Theme === "light" ? "white" : "#222222",
         justifyContent: "center",
         alignItems: "center",
       }}
     >
-      <ActivityIndicator size={Dimensions.get("window").width * .5} color="#999999" />
-      <Text>{message}</Text>
+      <ActivityIndicator
+        size={Dimensions.get("window").width * 0.5}
+        color="#999999"
+      />
+      <Text style={{ color: Theme === "light" ? "#222222" : "white" }}>
+        {message}
+      </Text>
     </View>
   );
 };
