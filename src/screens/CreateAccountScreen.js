@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { Button, Input, Text, Icon } from "react-native-elements";
-import { Feather } from "@expo/vector-icons";
 
 import { withNavigation } from "react-navigation";
 
