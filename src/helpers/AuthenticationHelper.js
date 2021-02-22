@@ -64,10 +64,8 @@ export default class AuthenticationHelper {
   static setAsyncStorageItem = async ({ itemTitle, itemPayload }) => {
     try {
       await AsyncStorage.setItem(itemTitle, "" + itemPayload);
-      console.log("Saved item " + itemTitle + " successfully.");
     } catch (error) {
       // : error setting the payload
-      console.log("Error setting the payload of " + itemTitle);
     }
   };
   /**
