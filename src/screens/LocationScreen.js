@@ -72,7 +72,6 @@ const LocationScreen = ({ navigation }) => {
   };
 
   const GetLocationInformation = async () => {
-    console.log("Location making call to get location information");
     try {
       const response = await coffida.get(`/location/${location_id}`);
       navigation.setParams({ title: response.data.location_name });
@@ -108,10 +107,15 @@ const LocationScreen = ({ navigation }) => {
         />
       </View>
 
-      <View style={{ flex: 1, backgroundColor: "#e4e4e4" }}>
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: Theme === "light" ? "#e4e4e4" : "#222222",
+        }}
+      >
         <View
           style={{
-            backgroundColor: "white",
+            backgroundColor: Theme === "light" ? "white" : "#222222",
             marginHorizontal: 10,
             top: -10,
             borderTopEndRadius: 15,
