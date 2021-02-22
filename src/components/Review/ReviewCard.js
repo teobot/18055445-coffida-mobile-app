@@ -115,7 +115,7 @@ const ReviewCard = ({ review, location_id, user_information }) => {
       ) : null}
 
       <View style={{ flex: 1, padding: 10 }}>
-        <Text>{review.review_body}</Text>
+        <Text style={{color: Theme === "dark" ? "whitesmoke" : "#222222"}}>{review.review_body}</Text>
       </View>
     </View>
   );
