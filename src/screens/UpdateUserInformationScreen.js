@@ -10,6 +10,7 @@ import ValidationHelper from "../helpers/ValidationHelper";
 import { withNavigation } from "react-navigation";
 import coffida from "../api/coffida";
 
+// User information reducer
 const reducer = (state, action) => {
   switch (action.type) {
     case "change_first_name":
@@ -25,13 +26,10 @@ const reducer = (state, action) => {
   }
 };
 
+// This screen is the user information screen,
+// here the user can update there information
 const UpdateUserInformationScreen = ({ navigation }) => {
-  const {
-    first_name,
-    last_name,
-    email,
-    user_id,
-  } = navigation.state.params.userInformation;
+  const { user_id } = navigation.state.params.userInformation;
   const [state, dispatch] = useReducer(reducer, {
     first_name: navigation.state.params.userInformation.first_name,
     last_name: navigation.state.params.userInformation.last_name,
@@ -50,109 +48,86 @@ const UpdateUserInformationScreen = ({ navigation }) => {
 
   const handleUpdate = async () => {
     // This function handles the updating of the account information
-    let oldValues = { first_name, last_name, email, password: "" };
-    let valuesChange = {
-      first_name: oldValues.first_name !== state.first_name,
-      last_name: oldValues.last_name !== state.last_name,
-      email: oldValues.email !== state.email,
-      password: oldValues.password !== state.password,
+
+    // Check which values have changed before validating
+    var oldValues = {
+      first_name: navigation.state.params.userInformation.first_name,
+      last_name: navigation.state.params.userInformation.last_name,
+      email: navigation.state.params.userInformation.email,
+      password: "",
     };
-    let errors = [];
-    let valuesToSend = {};
+    var newValues = state;
 
-    if (valuesChange.first_name) {
-      // The first name has changed
-      // Check if its allowed
-      const first_name_err = ValidationHelper.validator({
-        type: "validate_first_name",
-        payload: state.first_name,
-      });
-      first_name_err !== undefined
-        ? errors.push(first_name_err)
-        : (valuesToSend["first_name"] = state.first_name);
-    }
-    if (valuesChange.last_name) {
-      // The last name has changed
-      // Check if its allowed
-      const last_name_err = ValidationHelper.validator({
-        type: "validate_last_name",
-        payload: state.last_name,
-      });
-      last_name_err !== undefined
-        ? errors.push(last_name_err)
-        : (valuesToSend["last_name"] = state.last_name);
-    }
-    if (valuesChange.email) {
-      // The email has changed
-      // Check if its allowed
-      const email_err = ValidationHelper.validator({
-        type: "validate_email",
-        payload: state.last_name,
-      });
-      email_err !== undefined
-        ? errors.push(email_err)
-        : (valuesToSend["email"] = state.email);
-    }
-    if (valuesChange.password) {
-      // The password has changed
-      // Check if its allowed
-      const password_err = ValidationHelper.validator({
-        type: "validate_password",
-        payload: state.password,
-      });
-      password_err !== undefined
-        ? errors.push(password_err)
-        : (valuesToSend["password"] = state.password);
-    }
+    // Create a new object including the changed values
+    let valuesToSend = Object.keys(newValues).reduce((difference, key) => {
+      if (oldValues[key] === newValues[key]) return difference;
+      return {
+        ...difference,
+        [key]: newValues[key],
+      };
+    }, {});
 
-    if (errors.length > 0) {
-      // There are errors, display a error message
-      let message = "";
+    // Validate the new array
+    const errors = ValidationHelper.validator(valuesToSend);
+
+    // If there are errors display a message
+    if (errors !== undefined) {
+      // There is more than one error, display to user
+      let error_message = "";
       errors.forEach((error) => {
-        if (error !== undefined) {
-          message += error[Object.keys(error)[0]] + "\n";
-        }
+        error_message += error + "\n";
       });
       showBadInputToast({
         topMessage: "Error with information",
-        bottomMessage: message,
+        bottomMessage: error_message,
       });
       return;
-    } else {
-      // I checked if the values have changed and validated them
-      // Each of the validation and changed values are inside valuesToSend
-      try {
-        const response = await coffida.patch(`/user/${user_id}`, valuesToSend);
-        if (response.status === 200) {
-          // The patch was successful
-          show200Toast("Account information has been updated");
-          navigation.goBack();
-        }
-      } catch (error) {
-        // : failed patching the user information
-        if (error.response.status === 400) {
-          // : Bad request
-          show404Toast();
-        } else if (error.response.status === 403) {
-          // user has tried to update another user
-          showBadInputToast({
-            topMessage: "Forbidden",
-            bottomMessage: "Please reload the app",
-          });
-        } else {
-          // : most likely networking issue
-          show500Toast();
-        }
+    }
+
+    // I checked if the values have changed and validated them
+    // Each of the validation and changed values are inside valuesToSend
+    try {
+      const response = await coffida.patch(`/user/${user_id}`, valuesToSend);
+      if (response.status === 200) {
+        // The patch was successful
+        show200Toast("Account information has been updated");
+        navigation.goBack();
+      }
+    } catch (error) {
+      // : failed patching the user information
+      if (error.response.status === 400) {
+        // : Bad request
+        show404Toast();
+      } else if (error.response.status === 403) {
+        // user has tried to update another user
+        showBadInputToast({
+          topMessage: "Forbidden",
+          bottomMessage: "Please reload the app",
+        });
+      } else {
+        // : most likely networking issue
+        show500Toast();
       }
     }
   };
 
+  const InputLabel = (labelTitle) => {
+    return (
+      <Text style={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}>
+        {labelTitle}
+      </Text>
+    );
+  };
+
+  const ThemeBackgroundColor = {color: Theme === "dark" ? "whitesmoke" : "#222222"}
+
   return (
     <View style={{ padding: 15, marginVertical: 15 }}>
       <View style={styles.inputContainer}>
-        <Text>First name</Text>
+        {InputLabel("First Name")}
         <Input
           value={state.first_name}
+          inputStyle={ThemeBackgroundColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_first_name", payload: newValue })
           }
@@ -160,9 +135,10 @@ const UpdateUserInformationScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text>Last name</Text>
+        {InputLabel("Last Name")}
         <Input
           value={state.last_name}
+          inputStyle={ThemeBackgroundColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_last_name", payload: newValue })
           }
@@ -170,9 +146,10 @@ const UpdateUserInformationScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text>Email</Text>
+        {InputLabel("Email")}
         <Input
           value={state.email}
+          inputStyle={ThemeBackgroundColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_email", payload: newValue })
           }
@@ -180,10 +157,11 @@ const UpdateUserInformationScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <Text>Password</Text>
+        {InputLabel("Password")}
         <Input
           placeholder="Enter new password"
           value={state.password}
+          inputStyle={ThemeBackgroundColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_password", payload: newValue })
           }
