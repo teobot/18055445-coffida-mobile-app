@@ -3,9 +3,15 @@ Created By: **Theo Jed Barber Clapperton**
 Written In: **React Native**  
 Student ID: **18055445**  
 Last Updated: **22/02/2021**  
-Version: **1.3.6**
+Version: **1.3.9**
 
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
+
+## Running
+1. Run `npm install` inside the coffida directory
+2. Make sure that the coffida backend if running
+3. If needed change the URL of the coffida backend inside ***/src/api/coffida.js***
+4. Run `npm start` inside this app root directory
 
 ## Building
 - Run `expo build:android` or `expo build:ios`.
@@ -15,10 +21,50 @@ Version: **1.3.6**
 
 ## Changes
 
+### 24/02/2021
+- coffida.js: Added comments, Integrated refactored theme coloring
+- AccountButton: Added comments, Integrated refactored theme coloring
+- DeleteReview: Added comments, Integrated refactored theme coloring
+- ResultRow: Added comments, Integrated refactored theme coloring 
+- SettingsButton: Added comments, Integrated refactored theme coloring
+- LocationCard: Added comments, Integrated refactored theme coloring
+- LocationLikeButton: Added comments, Integrated refactored theme coloring
+- LocationQuickStats: Added comments, Integrated refactored theme coloring
+- LocationRatingStats: Added comments, Integrated refactored theme coloring
+- OwnUserReviewView: Added comments, Integrated refactored theme coloring
+- ReviewCard: Added comments, Integrated refactored theme coloring
+- ReviewLikeButton: Added comments, Integrated refactored theme coloring
+- EndOfResultsView: Added comments, Integrated refactored theme coloring
+- SearchPaginationButton: Added comments, Integrated refactored theme coloring
+- SearchRatingInput: Added comments, Integrated refactored theme coloring
+- LogoutController: Added comments, Integrated refactored theme coloring
+- ThemeController: Added comments, Integrated refactored theme coloring
+- LocationContext: Added comments, Integrated refactored theme coloring
+- ThemeContext: Added comments, Integrated refactored theme coloring
+- ToastContext: Added comments, Integrated refactored theme coloring
+- AuthenticationHelper: Added comments, Integrated refactored theme coloring
+- CoffidaHelper: Added comments, Integrated refactored theme coloring
+- ImageHelper: Added comments, Integrated refactored theme coloring
+- LocationHelper: Added comments, Integrated refactored theme coloring
+- ValidationHelper: Added comments, Integrated refactored theme coloring
+- AccountScreen: Added comments, Integrated refactored theme coloring
+- CreateAccountScreen: Added comments, Integrated refactored theme coloring
+- LoadingScreen: Added comments, Integrated refactored theme coloring
+- LoginScreen: Added comments, Integrated refactored theme coloring
+- SearchScreen: Added comments, Integrated refactored theme coloring
+- SettingsScreen: Added comments, Integrated refactored theme coloring
+- UpdateUserInformationScreen: Added comments, Integrated refactored theme coloring
+- RatingInput: Deleted unused component
+- Updated README
+- Updated version
+
 ### 23/02/2021
 - Updated logos
-- Fixed issue on deleting review
-- 
+- DeleteReview: Fixed delete review issue, Added comment
+- CreateAccountScreen: Removed feather import, Fixed dynamic theme color
+- LocationReviewScreen: Fixed DeleteReview component props, Removed imports
+- LoginScreen: Fixed styling, Fixed imports, Added password viewer
+
 ### 22/02/2021
 - Implement a dark mode feature
 - Updated asset visuals
