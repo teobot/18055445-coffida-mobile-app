@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext, createRef } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
 import { Button, Input, Text, Icon, Image } from "react-native-elements";
 import { withNavigation } from "react-navigation";
