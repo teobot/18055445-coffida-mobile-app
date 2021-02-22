@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Divider, Button } from "react-native-elements";
 import { withNavigation } from "react-navigation";
 import Icon from "react-native-vector-icons/FontAwesome";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const OwnUserReviewView = ({
   locationResult,
@@ -12,6 +13,7 @@ const OwnUserReviewView = ({
   const [userReviewAlready, setUserReviewAlready] = useState(false);
   const [userReview, setUserReview] = useState(null);
   const location_id = locationResult.location_id;
+  const { Theme } = useContext(ThemeContext);
 
   useEffect(() => {
     checkIfUserHasReviewed();
@@ -41,7 +43,7 @@ const OwnUserReviewView = ({
         setUserReview(USER_REVIEW);
         setUserReviewAlready(USER_REVIEW !== null);
       } catch (error) {
-        console.log(error);
+        // Error determining if the user has already reviewed
       }
     } else {
       // : user information is still loading on the parent view
@@ -50,7 +52,14 @@ const OwnUserReviewView = ({
 
   return (
     <View style={{ padding: 15, margin: 15, justifyContent: "center" }}>
-      <Text style={{ fontSize: 26, fontWeight: "bold", marginBottom: 5 }}>
+      <Text
+        style={{
+          fontSize: 26,
+          fontWeight: "bold",
+          marginBottom: 5,
+          color: Theme === "dark" ? "whitesmoke" : "#222222",
+        }}
+      >
         Your Review:
       </Text>
       <Button
