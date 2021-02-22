@@ -2,6 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import coffida from "../api/coffida";
 
+// Token and Id storage names
 const ACCESS_TOKEN_ITEM_NAME = "@MY_ACCESS_TOKEN";
 const USER_ID_ITEM_NAME = "@ID";
 

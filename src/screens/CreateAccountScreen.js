@@ -1,21 +1,23 @@
-import React, { useReducer, useState, useContext, createRef } from "react";
-import {
-  View,
-  StyleSheet,
-  KeyboardAvoidingView,
-  TouchableOpacity,
-} from "react-native";
-import { Button, Input, Text, Icon } from "react-native-elements";
+import React, { useReducer, useState, useContext } from "react";
 
+// React elements imports
+import { View, StyleSheet, KeyboardAvoidingView } from "react-native";
+import { Input, Text, Icon } from "react-native-elements";
+
+// Navigation imports
 import { withNavigation } from "react-navigation";
 
+// Helper imports
 import ValidationHelper from "../helpers/ValidationHelper";
 
+// Context imports
 import { ThemeContext } from "../context/ThemeContext";
 import { ToastContext } from "../context/ToastContext";
 
+// Api imports
 import coffida from "../api/coffida";
 
+// This is the reducer for the new account information
 const reducer = (state, action) => {
   switch (action.type) {
     case "change_last_name":
@@ -32,6 +34,9 @@ const reducer = (state, action) => {
 };
 
 const CreateAccountScreen = ({ navigation }) => {
+  // This is the account creation screen
+
+  // state init
   const [state, dispatch] = useReducer(reducer, {
     first_name: "",
     last_name: "",
@@ -39,11 +44,17 @@ const CreateAccountScreen = ({ navigation }) => {
     password: "",
   });
   const [passwordVisible, setPasswordVisible] = useState(true);
-  const { Theme } = useContext(ThemeContext);
+
+  // Context init
+  const { Theme, ThemeTextColor } = useContext(ThemeContext);
   const { showToast, show404Toast, show500Toast } = useContext(ToastContext);
 
   const handleAccountCreation = async () => {
+    // This handles the submission of the account information
+
     const { first_name, last_name, email, password } = state;
+
+    // Validate the given information
     const errors = ValidationHelper.validator({
       first_name,
       last_name,
@@ -52,7 +63,7 @@ const CreateAccountScreen = ({ navigation }) => {
     });
 
     if (errors !== undefined) {
-      // Show of the user input has returned errors
+      // account information includes some errors, display them to the user
       let error_message = "";
       errors.forEach((error) => {
         error_message += error + "\n";
@@ -70,9 +81,11 @@ const CreateAccountScreen = ({ navigation }) => {
 
     // all form information has returned with no errors
     try {
+      // Post information to coffida
       const form_response = await coffida.post("/user", state);
 
       if (form_response.status === 201) {
+        // If response is good
         showToast({
           type: "success",
           position: "top",
@@ -102,7 +115,7 @@ const CreateAccountScreen = ({ navigation }) => {
   return (
     <KeyboardAvoidingView behavior="height" style={{ flex: 1, padding: 40 }}>
       <View style={{ flex: 1, paddingHorizontal: 10 }}>
-        <Text h2 style={{ color: Theme === "dark" ? "whitesmoke" : "black" }}>
+        <Text h2 style={ThemeTextColor}>
           Create{"\n"}Account
         </Text>
       </View>
@@ -118,7 +131,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_first_name", payload: newVal })
             }
             placeholder="First name"
-            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
+            inputStyle={ThemeTextColor}
           />
         </View>
 
@@ -131,7 +144,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_last_name", payload: newVal })
             }
             placeholder="Last name"
-            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
+            inputStyle={ThemeTextColor}
           />
         </View>
 
@@ -144,7 +157,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_email", payload: newVal })
             }
             placeholder="Email"
-            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
+            inputStyle={ThemeTextColor}
           />
         </View>
 
@@ -158,7 +171,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_password", payload: newVal })
             }
             placeholder="Password"
-            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
+            inputStyle={ThemeTextColor}
           />
           <Icon
             onPress={() => setPasswordVisible(!passwordVisible)}
@@ -169,20 +182,13 @@ const CreateAccountScreen = ({ navigation }) => {
           />
         </View>
       </View>
-      <View
-        style={{
-          flex: 1,
-          flexDirection: "row",
-          alignItems: "center",
-          padding: 10,
-        }}
-      >
+      <View style={styles.SignUpContainerStyle}>
         <View style={{ flex: 1 }}>
           <Text
             h4
             style={{
               alignSelf: "flex-start",
-              color: Theme === "dark" ? "whitesmoke" : "#222222",
+              ...ThemeTextColor,
             }}
           >
             Sign up
@@ -204,6 +210,13 @@ const CreateAccountScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  SignUpContainerStyle: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 10,
+  },
+});
 
 export default withNavigation(CreateAccountScreen);

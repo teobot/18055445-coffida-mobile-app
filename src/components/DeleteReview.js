@@ -19,6 +19,17 @@ const DeleteReview = ({ navigation, location_id, review_id }) => {
   const [overlay, setOverlay] = useState(false);
   const { Theme } = useContext(ThemeContext);
 
+  const handleReviewImageDelete = async () => {
+    // handle review image deletion
+    try {
+      const response = await coffida.delete(
+        `/location/${location_id}/review/${review_id}/photo`
+      );
+    } catch (error) {
+      // On review deletion the review image could not be deleted
+    }
+  };
+
   const handleReviewDelete = async () => {
     // Handle the deletion of the review
     try {
@@ -28,6 +39,7 @@ const DeleteReview = ({ navigation, location_id, review_id }) => {
       if (response.status === 200) {
         // Deletion was successful
         show200Toast("Review has been deleted");
+        handleReviewImageDelete();
         navigation.navigate("Location", {
           location_id,
         });

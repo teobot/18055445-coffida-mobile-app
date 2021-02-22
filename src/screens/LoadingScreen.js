@@ -1,4 +1,6 @@
 import React, { useContext } from "react";
+
+// React element imports
 import {
   View,
   Text,
@@ -6,15 +8,19 @@ import {
   ActivityIndicator,
   Dimensions,
 } from "react-native";
+
+// Context imports
 import { ThemeContext } from "../context/ThemeContext";
+
 const LoadingScreen = ({ message }) => {
-  const { Theme } = useContext(ThemeContext);
+  // This is the loading screen
+  const { ThemeTextColor, ThemeBackgroundColor } = useContext(ThemeContext);
   return (
     <View
       style={{
         flex: 1,
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: Theme === "light" ? "white" : "#222222",
+        ...ThemeBackgroundColor,
         justifyContent: "center",
         alignItems: "center",
       }}
@@ -23,9 +29,7 @@ const LoadingScreen = ({ message }) => {
         size={Dimensions.get("window").width * 0.5}
         color="#999999"
       />
-      <Text style={{ color: Theme === "light" ? "#222222" : "white" }}>
-        {message}
-      </Text>
+      <Text style={ThemeTextColor}>{message}</Text>
     </View>
   );
 };

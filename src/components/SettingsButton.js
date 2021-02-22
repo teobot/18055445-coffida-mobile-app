@@ -1,15 +1,27 @@
 import React, { useContext } from "react";
+
+// React element imports
 import { TouchableOpacity } from "react-native";
+
+// Icon import
 import { MaterialIcons } from "@expo/vector-icons";
 
+// Navigation import
 import { withNavigation } from "react-navigation";
+
+// Context import
 import { ThemeContext } from "../context/ThemeContext";
 
-const SettingsScreen = ({ navigation }) => {
+const SettingsButton = ({ navigation }) => {
+  // This is the settings button and navigates the user to the settings screen onClick
+
   const goToSettings = async () => {
+    // Navigate the user to the settings screen
     navigation.navigate("Settings");
   };
-  const { Theme } = useContext(ThemeContext);
+
+  // init the Theme context
+  const { ThemeTextColor } = useContext(ThemeContext);
 
   return (
     <TouchableOpacity onPress={goToSettings}>
@@ -18,7 +30,7 @@ const SettingsScreen = ({ navigation }) => {
           fontSize: 28,
           padding: 5,
           margin: 5,
-          color: Theme === "light" ? "#222222" : "whitesmoke",
+          ...ThemeTextColor,
         }}
         name="settings"
       />
@@ -26,4 +38,4 @@ const SettingsScreen = ({ navigation }) => {
   );
 };
 
-export default withNavigation(SettingsScreen);
+export default withNavigation(SettingsButton);

@@ -1,6 +1,10 @@
 import React, { useContext } from "react";
-import { View, Text, StyleSheet, FlatList } from "react-native";
+
+// React element imports
+import { View, Text } from "react-native";
 import { Divider } from "react-native-elements";
+
+// Context import
 import { ThemeContext } from "../context/ThemeContext";
 
 const ResultRow = ({
@@ -10,7 +14,8 @@ const ResultRow = ({
   containerPadding,
   containerMargin,
 }) => {
-  const { Theme } = useContext(ThemeContext);
+  // This is a result row, for displaying reviews and favourite locations to the user
+  const { ThemeTextColor } = useContext(ThemeContext);
   return (
     <View
       style={{
@@ -30,7 +35,7 @@ const ResultRow = ({
           style={{
             fontSize: 26,
             fontWeight: "bold",
-            color: Theme === "dark" ? "whitesmoke" : "#222222",
+            ...ThemeTextColor,
           }}
         >
           {title}

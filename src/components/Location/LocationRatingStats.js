@@ -1,11 +1,18 @@
 import React, { useContext } from "react";
+
+// React elements imports
 import { View, Text, StyleSheet } from "react-native";
+
+// Icon import
 import { AntDesign } from "@expo/vector-icons";
 
+// Context import
 import { ThemeContext } from "../../context/ThemeContext";
 
 const LocationRatingStats = ({ ratingRows, paddingSpace }) => {
-  const { Theme } = useContext(ThemeContext);
+  // The is the rating stat component for displaying a rating
+  
+  const { ThemeTextColor } = useContext(ThemeContext);
   const styles = StyleSheet.create({
     sectionContainer: {
       flex: 1,
@@ -25,14 +32,14 @@ const LocationRatingStats = ({ ratingRows, paddingSpace }) => {
       alignItems: "center",
       justifyContent: "center",
       alignSelf: "center",
-      color: Theme === "dark" ? "whitesmoke" : "#222222"
+      ...ThemeTextColor
     },
     locationStatSubTextStyle: {
       fontSize: 12,
       alignItems: "center",
       justifyContent: "center",
       alignSelf: "center",
-      color: Theme === "dark" ? "whitesmoke" : "#222222"
+      ...ThemeTextColor
     },
     starIconStyle: {
       color: "gold",

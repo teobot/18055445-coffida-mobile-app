@@ -5,25 +5,30 @@ import React, {
   useRef,
   useContext,
 } from "react";
-import { StyleSheet, FlatList, View, Picker } from "react-native";
-import { withNavigation } from "react-navigation";
 
+// Component imports
+import { StyleSheet, FlatList, View, Picker } from "react-native";
+import { SearchBar, Button, Text, Divider } from "react-native-elements";
+
+// Api imports
 import coffida from "../api/coffida";
 
+// Custom components imports
 import LocationCard from "../components/Location/LocationCard";
 import LoadingScreen from "../screens/LoadingScreen";
-
-import { SearchBar, Button, Text, Divider, Badge } from "react-native-elements";
-import { getDistance } from "geolib";
-
 import SearchRatingInput from "../components/SearchScreen/SearchRatingInput";
 import EndOfResultsView from "../components/SearchScreen/EndOfResultsView";
 import SearchPaginationButton from "../components/SearchScreen/SearchPaginationButton";
 
+// Library imports
+import { getDistance } from "geolib";
+
+// Context imports
 import { ThemeContext } from "../context/ThemeContext";
 import { ToastContext } from "../context/ToastContext";
 import { LocationContext } from "../context/LocationContext";
 
+// Initial state of the search parameters
 const SearchParamsInitialState = {
   q: "",
   overall_rating: 0,
@@ -35,6 +40,7 @@ const SearchParamsInitialState = {
   offset: 0,
 };
 
+// This is the reducer for the seach parameters
 const reducer = (state, action) => {
   switch (action.type) {
     case "change_q":
@@ -60,29 +66,35 @@ const reducer = (state, action) => {
   }
 };
 
-const SearchScreen = ({ navigation }) => {
+const SearchScreen = () => {
+  // This is the landing/home screen, the user can search for locations and review them
+
+  // Set the initial states
+
+  // initial useState
   const [results, setResults] = useState([]);
-  const [resultSort, setResultSort] = useState({
-    sortBy: "location_name",
-    sortReverse: true,
-  });
-  const [Filters, setFilters] = useState([
-    { filterVar: "location_name", filterTitle: "Location Name" },
-    { filterVar: "distance", filterTitle: "Distance" },
-    { filterVar: "avg_overall_rating", filterTitle: "Overall Rating" },
-  ]);
   const [loadingResults, setLoadingResults] = useState(false);
   const [state, dispatch] = useReducer(reducer, SearchParamsInitialState);
   const [SearchOptionOpen, setSearchOptionOpen] = useState(false);
 
-  const useEffectLoaded = useRef(false);
+  // Sorting and filter array
+  const [resultSort, setResultSort] = useState({
+    sortBy: "location_name",
+    sortReverse: false,
+  });
+  // Add new filters here
+  const Filters = [
+    { filterVar: "location_name", filterTitle: "Location Name" },
+    { filterVar: "distance", filterTitle: "Distance" },
+    { filterVar: "avg_overall_rating", filterTitle: "Overall Rating" },
+  ];
 
+  // Context variables
   const { userLocation } = useContext(LocationContext);
-  const { show404Toast, show500Toast, showGoodInputToast } = useContext(
-    ToastContext
-  );
-  const { Theme } = useContext(ThemeContext);
+  const { show404Toast, show500Toast } = useContext(ToastContext);
+  const { Theme, ThemeTextColor } = useContext(ThemeContext);
 
+  // Searchable star ratings
   const SearchableRatings = [
     {
       t: "Overall Rating",
@@ -107,12 +119,17 @@ const SearchScreen = ({ navigation }) => {
   ];
 
   useEffect(() => {
+    // This is the initial getResults function call,
+    // Only update if the search params have changed
     if (state === SearchParamsInitialState) {
       getResult();
     }
   }, [state]);
 
+  // useRef to only trigger the function after the initial render
+  const useEffectLoaded = useRef(false);
   useEffect(() => {
+    // If the offset has changed then re-render the results
     if (useEffectLoaded.current) {
       getResult();
     } else {
@@ -121,6 +138,8 @@ const SearchScreen = ({ navigation }) => {
   }, [state.offset]);
 
   const SearchParamsHaveChanged = () => {
+    // Function returns if the search parameters have changed
+    // return : TRUE IF searchParams have changed ELSE FALSE
     return (
       JSON.stringify({ ...state, limit: 20, offset: 0 }) !==
       JSON.stringify(SearchParamsInitialState)
@@ -128,22 +147,29 @@ const SearchScreen = ({ navigation }) => {
   };
 
   const getResult = async () => {
+    // This function handles the requesting and setting of the result data
     setLoadingResults(true);
     setSearchOptionOpen(false);
     let data = {};
 
-    // user clicked clear
+    // this finds which parameters have changed
+    // Map the changed values to a new object so we can add them to the params of the request
     for (const [key, value] of Object.entries(state)) {
+      // Foreach key and value inside the SearchParams state
+      // Check if the value is truthy, e.g. not empty || null || undefined
+      // If so then map to the new request params object
       if (value) {
         data[key] = value;
       }
     }
 
+    // Make the results request
     try {
       let response = await coffida.get("/find?", {
         params: data,
       });
       // We can give each location a distance to the user
+      // If the user has accept location use
       response.data.forEach((location) => {
         if (userLocation !== null) {
           // add the location distance
@@ -176,6 +202,7 @@ const SearchScreen = ({ navigation }) => {
   };
 
   const clearSearchParams = async () => {
+    // This calls the reducer to reset the SearchParameters
     dispatch({ type: "clear_params" });
   };
 
@@ -194,7 +221,7 @@ const SearchScreen = ({ navigation }) => {
         onEndEditing={getResult}
         onClear={() => dispatch({ type: "clear_params" })}
         onClear={() => dispatch({ type: "clear_params" })}
-        lightTheme={Theme === "dark" ? false : true}
+        lightTheme={Theme === "light"}
       />
       {SearchOptionOpen ? (
         <View>
@@ -208,17 +235,9 @@ const SearchScreen = ({ navigation }) => {
             />
           ))}
 
-          <View
-            style={{
-              padding: 5,
-              margin: 5,
-              borderRadius: 5,
-              borderColor: "black",
-              justifyContent: "center",
-            }}
-          >
+          <View style={styles.PickerContainerStyle}>
             <Picker
-              style={{color: Theme === "dark" ? "whitesmoke" : "#222222"}}
+              style={ThemeTextColor}
               selectedValue={state.search_in}
               onValueChange={(itemValue) =>
                 dispatch({ type: "change_search_in", payload: itemValue })
@@ -235,20 +254,20 @@ const SearchScreen = ({ navigation }) => {
 
           <View style={{ padding: 5 }}>
             <Button
-              containerStyle={{ margin: 5 }}
+              containerStyle={styles.ButtonContainerStyle}
               type="outline"
               title="Search"
               onPress={getResult}
             />
             <Button
-              containerStyle={{ margin: 5 }}
+              containerStyle={styles.ButtonContainerStyle}
               type="outline"
               title="Clear"
               onPress={clearSearchParams}
             />
           </View>
           <Button
-            titleStyle={{ fontSize: 12 }}
+            titleStyle={styles.ButtonTitleText}
             type="clear"
             onPress={() => setSearchOptionOpen(!SearchOptionOpen)}
             title={"close search options"}
@@ -257,7 +276,7 @@ const SearchScreen = ({ navigation }) => {
       ) : (
         <View style={{ alignItems: "center" }}>
           <Button
-            titleStyle={{ fontSize: 12 }}
+            titleStyle={styles.ButtonTitleText}
             type="clear"
             onPress={() => setSearchOptionOpen(!SearchOptionOpen)}
             title={
@@ -273,7 +292,14 @@ const SearchScreen = ({ navigation }) => {
                 right: 0,
               }}
             >
-              <Text style={{...styles.optionSideText, color: Theme === "dark" ? "whitesmoke" : "#222222"}}>Custom Search Enabled</Text>
+              <Text
+                style={{
+                  ...styles.optionSideText,
+                  ...ThemeTextColor,
+                }}
+              >
+                Custom Search Enabled
+              </Text>
             </View>
           ) : null}
 
@@ -285,7 +311,12 @@ const SearchScreen = ({ navigation }) => {
                 left: 0,
               }}
             >
-              <Text style={{...styles.optionSideText, color: Theme === "dark" ? "whitesmoke" : "#222222"}}>
+              <Text
+                style={{
+                  ...styles.optionSideText,
+                  ...ThemeTextColor,
+                }}
+              >
                 {loadingResults
                   ? "Calculating"
                   : `Loaded ${state.offset} ... ${
@@ -296,15 +327,19 @@ const SearchScreen = ({ navigation }) => {
           ) : null}
         </View>
       )}
-      <View
-        style={{ flexDirection: "row", paddingVertical: 2, marginVertical: 2 }}
-      >
-        <Text style={{ ...styles.optionSideText, alignSelf: "center", color: Theme === "dark" ? "whitesmoke" : "#222222" }}>
+      <View style={styles.FilterViewContainer}>
+        <Text
+          style={{
+            ...styles.optionSideText,
+            alignSelf: "center",
+            ...ThemeTextColor,
+          }}
+        >
           Filter Results:
         </Text>
         <FlatList
           horizontal
-          contentContainerStyle={{ flex: 1, justifyContent: "flex-start" }}
+          contentContainerStyle={styles.locationCardFlatlist}
           data={Filters}
           keyExtractor={(filter) => filter.filterVar}
           renderItem={({ item }) => {
@@ -353,7 +388,7 @@ const SearchScreen = ({ navigation }) => {
               </>
             }
             renderItem={({ item, index }) => {
-              return <LocationCard item={item} />;
+              return <LocationCard key={index} item={item} />;
             }}
           />
         </>
@@ -363,6 +398,21 @@ const SearchScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  PickerContainerStyle: {
+    padding: 5,
+    margin: 5,
+    borderRadius: 5,
+    borderColor: "black",
+    justifyContent: "center",
+  },
+  ButtonTitleText: { fontSize: 12 },
+  ButtonContainerStyle: { margin: 5 },
+  FilterViewContainer: {
+    flexDirection: "row",
+    paddingVertical: 2,
+    marginVertical: 2,
+  },
+  locationCardFlatlist: { flex: 1, justifyContent: "flex-start" },
   optionSideContainer: {
     position: "absolute",
     top: 0,
@@ -373,4 +423,4 @@ const styles = StyleSheet.create({
   optionSideText: { fontSize: 10, marginHorizontal: 5, paddingHorizontal: 5 },
 });
 
-export default withNavigation(SearchScreen);
+export default SearchScreen;

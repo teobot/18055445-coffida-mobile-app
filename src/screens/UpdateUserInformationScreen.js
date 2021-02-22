@@ -1,17 +1,21 @@
 import React, { useReducer, useContext } from "react";
 import { View, StyleSheet } from "react-native";
 import { Text, Button, Input } from "react-native-elements";
+import { withNavigation } from "react-navigation";
 
+// Context imports
 import { ThemeContext } from "../context/ThemeContext";
 import { ToastContext } from "../context/ToastContext";
 
+// Helper imports
 import ValidationHelper from "../helpers/ValidationHelper";
 
-import { withNavigation } from "react-navigation";
+// Api imports
 import coffida from "../api/coffida";
 
 // User information reducer
 const reducer = (state, action) => {
+  // Function is a react reducer, return state to be set
   switch (action.type) {
     case "change_first_name":
       return { ...state, first_name: action.payload };
@@ -26,9 +30,10 @@ const reducer = (state, action) => {
   }
 };
 
-// This screen is the user information screen,
-// here the user can update there information
 const UpdateUserInformationScreen = ({ navigation }) => {
+  // The UpdateUserInformationScreen is where the user updates there account information
+
+  // Set states
   const { user_id } = navigation.state.params.userInformation;
   const [state, dispatch] = useReducer(reducer, {
     first_name: navigation.state.params.userInformation.first_name,
@@ -36,10 +41,8 @@ const UpdateUserInformationScreen = ({ navigation }) => {
     email: navigation.state.params.userInformation.email,
     password: "",
   });
-
-  const { Theme } = useContext(ThemeContext);
+  const { Theme, ThemeTextColor } = useContext(ThemeContext);
   const {
-    showToast,
     show404Toast,
     show500Toast,
     show200Toast,
@@ -112,6 +115,7 @@ const UpdateUserInformationScreen = ({ navigation }) => {
   };
 
   const InputLabel = (labelTitle) => {
+    // Small custom component since its used here 4 times but no where else.
     return (
       <Text style={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}>
         {labelTitle}
@@ -119,15 +123,13 @@ const UpdateUserInformationScreen = ({ navigation }) => {
     );
   };
 
-  const ThemeBackgroundColor = {color: Theme === "dark" ? "whitesmoke" : "#222222"}
-
   return (
     <View style={{ padding: 15, marginVertical: 15 }}>
       <View style={styles.inputContainer}>
         {InputLabel("First Name")}
         <Input
           value={state.first_name}
-          inputStyle={ThemeBackgroundColor}
+          inputStyle={ThemeTextColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_first_name", payload: newValue })
           }
@@ -138,7 +140,7 @@ const UpdateUserInformationScreen = ({ navigation }) => {
         {InputLabel("Last Name")}
         <Input
           value={state.last_name}
-          inputStyle={ThemeBackgroundColor}
+          inputStyle={ThemeTextColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_last_name", payload: newValue })
           }
@@ -149,7 +151,7 @@ const UpdateUserInformationScreen = ({ navigation }) => {
         {InputLabel("Email")}
         <Input
           value={state.email}
-          inputStyle={ThemeBackgroundColor}
+          inputStyle={ThemeTextColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_email", payload: newValue })
           }
@@ -161,7 +163,7 @@ const UpdateUserInformationScreen = ({ navigation }) => {
         <Input
           placeholder="Enter new password"
           value={state.password}
-          inputStyle={ThemeBackgroundColor}
+          inputStyle={ThemeTextColor}
           onChangeText={(newValue) =>
             dispatch({ type: "change_password", payload: newValue })
           }
@@ -180,6 +182,7 @@ const styles = StyleSheet.create({
 });
 
 UpdateUserInformationScreen.navigationOptions = (screenProps) => ({
+  // Change the navigation title
   headerTitle: "Account Management",
 });
 

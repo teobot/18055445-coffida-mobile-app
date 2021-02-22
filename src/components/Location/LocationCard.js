@@ -1,4 +1,6 @@
 import React, { useContext, useEffect } from "react";
+
+// React element imports
 import {
   View,
   Text,
@@ -7,13 +9,18 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { getDistance } from "geolib";
-import { withNavigation } from "react-navigation";
-import { Icon, Badge, Avatar } from "react-native-elements";
+import { Icon, Badge } from "react-native-elements";
 
+// Navigation import
+import { withNavigation } from "react-navigation";
+
+// Context import
 import { ThemeContext } from "../../context/ThemeContext";
 
 const LocationCard = ({ item, navigation }) => {
+  // This is the location card for displaying the location information and directing the user towards the location screen
+
+  // Destructor location item
   const {
     location_name,
     avg_overall_rating,
@@ -23,7 +30,8 @@ const LocationCard = ({ item, navigation }) => {
     distance,
   } = item;
 
-  const { Theme } = useContext(ThemeContext);
+  // Context init
+  const { ThemeTextColor } = useContext(ThemeContext);
 
   const styles = StyleSheet.create({
     imageStyle: {
@@ -35,10 +43,10 @@ const LocationCard = ({ item, navigation }) => {
     locationNameText: {
       fontWeight: "bold",
       fontSize: 16,
-      color: Theme === "dark" ? "whitesmoke" : "#222222",
+      ...ThemeTextColor,
     },
     locationDetailsText: {
-      color: Theme === "dark" ? "whitesmoke" : "#222222",
+      ...ThemeTextColor,
     },
     container: {
       margin: 15,

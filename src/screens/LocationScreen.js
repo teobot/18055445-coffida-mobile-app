@@ -1,11 +1,15 @@
 import React, { useEffect, useState, createRef, useContext } from "react";
+
+// React element imports
 import { View, StyleSheet, Image, Dimensions, ScrollView } from "react-native";
 import { withNavigation } from "react-navigation";
+import { Divider, Text } from "react-native-elements";
 
+// Api imports
 import coffida from "../api/coffida";
 
+// Custom Component imports
 import LoadingScreen from "../screens/LoadingScreen";
-
 import ResultRow from "../components/ResultRow";
 import ReviewCard from "../components/Review/ReviewCard";
 import LocationLikeButton from "../components/Location/LocationLikeButton";
@@ -13,40 +17,44 @@ import LocationQuickStats from "../components/Location/LocationQuickStats";
 import LocationRatingStats from "../components/Location/LocationRatingStats";
 import OwnUserReviewView from "../components/Review/OwnUserReviewView";
 
-import { Divider, Text } from "react-native-elements";
+// Library imports
 import { getDistance } from "geolib";
 
+// React native maps imports
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline } from "react-native-maps";
 
+// Helper imports
 import CoffidaHelper from "../helpers/CoffidaHelper";
 
+// Context imports
 import { ThemeContext } from "../context/ThemeContext";
 import { LocationContext } from "../context/LocationContext";
 import { ToastContext } from "../context/ToastContext";
 
+// Device dimension const
 const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 
 const LocationScreen = ({ navigation }) => {
-  const location_id = navigation.getParam("location_id");
+  // This screen is a location information display
+  // It displays the information on the selected location
 
+  // state and const initialization
+  const location_id = navigation.getParam("location_id");
   const [locationResult, setLocationResult] = useState(null);
   const [userInformation, setUserInformation] = useState(null);
 
+  // Context import
   const { userLocation } = useContext(LocationContext);
-  const { Theme } = useContext(ThemeContext);
-  const {
-    showToast,
-    show404Toast,
-    show500Toast,
-    show200Toast,
-    showBadInputToast,
-    showGoodInputToast,
-  } = useContext(ToastContext);
+  const { Theme, ThemeBackgroundColor } = useContext(
+    ThemeContext
+  );
+  const { show500Toast } = useContext(ToastContext);
 
+  // Google map reference
   const googleMap = createRef();
 
   useEffect(() => {
+    // Init the didFocus listener for updating the location information
     const subs = navigation.addListener("didFocus", (payload) => {
       UpdateInformation();
     });
@@ -56,12 +64,13 @@ const LocationScreen = ({ navigation }) => {
   }, []);
 
   const UpdateInformation = async () => {
+    // This functions calls all the required functions to re render on useEffect
     GetLocationInformation();
     GetUserInformation();
   };
 
   const GetUserInformation = async () => {
-    // Return the user information
+    // This function handles the gathering of the user information
     try {
       const userInformation = await CoffidaHelper.getUserInformation();
       setUserInformation(userInformation);
@@ -72,6 +81,7 @@ const LocationScreen = ({ navigation }) => {
   };
 
   const GetLocationInformation = async () => {
+    // This function handles the rendering of the location information
     try {
       const response = await coffida.get(`/location/${location_id}`);
       navigation.setParams({ title: response.data.location_name });
@@ -100,7 +110,7 @@ const LocationScreen = ({ navigation }) => {
           }}
         />
         <LocationQuickStats
-          styles={{ position: 0, bottom: 10, paddingHorizontal: 10 }}
+          styles={styles.LocationQuickStatStyle}
           name={locationResult.location_name}
           rating={locationResult.avg_overall_rating}
           ratingTitle="Overall Rating"
@@ -110,16 +120,13 @@ const LocationScreen = ({ navigation }) => {
       <View
         style={{
           flex: 1,
-          backgroundColor: Theme === "light" ? "#e4e4e4" : "#222222",
+          ThemeBackgroundColor,
         }}
       >
         <View
           style={{
             backgroundColor: Theme === "light" ? "white" : "#222222",
-            marginHorizontal: 10,
-            top: -10,
-            borderTopEndRadius: 15,
-            borderTopStartRadius: 15,
+            ...styles.LocationRatingContainerStyle,
           }}
         >
           <LocationRatingStats
@@ -182,14 +189,7 @@ const LocationScreen = ({ navigation }) => {
             />
           </MapView>
           <View style={{ width: "100%", padding: 5 }}>
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: "bold",
-                alignSelf: "center",
-                textDecorationLine: "underline",
-              }}
-            >
+            <Text style={styles.UserDistanceViewStyle}>
               {userLocation !== null
                 ? `You are ${`${(
                     getDistance(
@@ -232,32 +232,27 @@ const LocationScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
-  locationStatsStyleContainer: {
-    flex: 1,
+  LocationRatingContainerStyle: {
+    marginHorizontal: 10,
+    top: -10,
+    borderTopEndRadius: 15,
+    borderTopStartRadius: 15,
   },
-  locationStatHeaderStyle: {
-    fontSize: 18,
+  UserDistanceViewStyle: {
+    fontSize: 14,
     fontWeight: "bold",
     alignSelf: "center",
-    padding: 10,
+    textDecorationLine: "underline",
   },
-  locationStatSubTextStyle: {
-    fontSize: 12,
-    alignSelf: "center",
-  },
-  starIconStyle: {
-    color: "gold",
-    alignSelf: "center",
-    fontSize: 20,
-  },
-  textShadow: {
-    textShadowColor: "rgba(0, 0, 0, 0.9)",
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 20,
+  LocationQuickStatStyle: {
+    position: "absolute",
+    bottom: 10,
+    paddingHorizontal: 10,
   },
 });
 
 LocationScreen.navigationOptions = ({ navigation }) => {
+  // This handles the changing of the navigation title to the location name
   const title = navigation.getParam("title");
   if (title) {
     return {

@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
+
+// React element imports
 import {
   View,
   Text,
@@ -9,52 +11,70 @@ import {
   ScrollView,
   TouchableOpacity,
 } from "react-native";
-
-import { withNavigation } from "react-navigation";
-
 import { Button } from "react-native-elements";
 
+// Navigation imports
+import { withNavigation } from "react-navigation";
+
+// Custom component imports
 import LoadingScreen from "../screens/LoadingScreen";
 import ResultRow from "../components/ResultRow";
 import ReviewCard from "../components/Review/ReviewCard";
 import LocationCard from "../components/Location/LocationCard";
 import CoffidaHelper from "../helpers/CoffidaHelper";
 
+// Context imports
 import { ThemeContext } from "../context/ThemeContext";
 import { LocationContext } from "../context/LocationContext";
 import { ToastContext } from "../context/ToastContext";
 
+// Library imports
 import { getDistance } from "geolib";
 
 const capitalize = (s) => {
+  // This function capsulizes the first characters of a string
   if (typeof s !== "string") return "";
   return s.charAt(0).toUpperCase() + s.slice(1);
 };
 
-const windowWidth = Dimensions.get("window").width;
+// Window dimension const
 const windowHeight = Dimensions.get("window").height;
 
 const AccountScreen = ({ navigation }) => {
+  // This is the user account information screen
+
+  // useState inits
   const [userInformation, setUserInformation] = useState(null);
+
+  // Context inits
   const { userLocation } = useContext(LocationContext);
-  const { Theme } = useContext(ThemeContext);
+  const { Theme, ThemeTextColor, ThemeBackgroundColor } = useContext(
+    ThemeContext
+  );
   const { showBadInputToast } = useContext(ToastContext);
 
   useEffect(() => {
+    // Add a didFocus listener to update the account information
     const subs = navigation.addListener("didFocus", (payload) => {
       updateUserInformation();
     });
     return () => {
+      // Remove listener on unmount
       subs.remove();
     };
   }, []);
 
   const updateUserInformation = async () => {
+    // This function handles the updating of the user information
     try {
+      // Gather the user information
       let userData = await CoffidaHelper.getUserInformation();
       const { first_name } = userData;
+
+      // Set navigation params
       navigation.setParams({ title: first_name });
       if (userLocation !== null) {
+        // user location is valid,
         // We can give each location a distance to the user
         userData.favourite_locations.forEach((location) => {
           if (userLocation !== null) {
@@ -85,6 +105,7 @@ const AccountScreen = ({ navigation }) => {
   };
 
   const userLikes = () => {
+    // This calculates the amount of likes the user has
     let likes = 0;
     userInformation.reviews.forEach((review) => {
       likes = likes + review.review.likes;
@@ -92,6 +113,7 @@ const AccountScreen = ({ navigation }) => {
     return likes;
   };
 
+  // I declare the styling here as I can interact with the context Theme props
   const styles = StyleSheet.create({
     statsViewContainer: {
       marginTop: 15,
@@ -101,13 +123,13 @@ const AccountScreen = ({ navigation }) => {
       fontSize: 20,
       fontWeight: "bold",
       alignSelf: "center",
-      color: Theme === "dark" ? "whitesmoke" : "#222222",
+      ...ThemeTextColor,
     },
     subTextStatStyle: {
       fontSize: 13,
       color: "grey",
       alignSelf: "center",
-      color: Theme === "dark" ? "whitesmoke" : "#222222",
+      ...ThemeTextColor,
     },
     StatsTextViewContainer: {
       flex: 1,
@@ -117,7 +139,7 @@ const AccountScreen = ({ navigation }) => {
       borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
       paddingTop: 60,
-      backgroundColor: Theme === "light" ? "white" : "#222222",
+      ...ThemeBackgroundColor,
     },
     profileImageStyle: {
       height: 120,
@@ -132,7 +154,7 @@ const AccountScreen = ({ navigation }) => {
       alignSelf: "center",
       fontSize: 28,
       fontWeight: "bold",
-      color: Theme === "dark" ? "whitesmoke" : "#222222",
+      ...ThemeTextColor,
     },
   });
 
@@ -220,6 +242,7 @@ const AccountScreen = ({ navigation }) => {
 };
 
 AccountScreen.navigationOptions = ({ navigation }) => {
+  // Here I am setting the title of the navigation bar to the users name
   const name = navigation.getParam("title");
   if (name) {
     return {

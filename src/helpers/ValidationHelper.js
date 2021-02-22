@@ -1,5 +1,7 @@
 import { validate } from "validate.js";
 
+// Add terms here that are banned from the review_body
+// These are all converted to lowercase and compared against the review that is also lowercase
 const BANNED_CAKE_RELATED_TERMS = [
   "tea",
   "teas",
@@ -9,6 +11,8 @@ const BANNED_CAKE_RELATED_TERMS = [
   "pastry",
 ];
 
+// Here I list the constraints that the input data has to follow,
+// I use the validate.js library here for all validation
 const constraints = {
   email: {
     email: {
@@ -43,7 +47,10 @@ const constraints = {
 
 export default class ValidationHelper {
   static validator = (payload) => {
+    // This function handles the validation of each of the given inputs
     let arrayOfErrors = [];
+
+    // Validate all given payloads against the constraints
     let validationErrors = validate(payload, constraints, {
       format: "flat",
     });
@@ -60,7 +67,7 @@ export default class ValidationHelper {
             .split(" ")
             .includes(bannedWord.toLowerCase())
         ) {
-          arrayOfErrors.push(`Remove "${bannedWord}" from the review 👿`);
+          arrayOfErrors.push(`Remove "${bannedWord}" from the review! 👿`);
         }
       });
     }

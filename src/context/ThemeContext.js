@@ -19,5 +19,11 @@ export default () => {
     }
   };
 
-  return [Theme, { Theme, changeTheme }];
+  // Create the changing colors for text and for backgrounds
+  const ThemeTextColor = { color: Theme === "dark" ? "whitesmoke" : "#222222" };
+  const ThemeBackgroundColor = {
+    backgroundColor: Theme === "light" ? "#e4e4e4" : "#222222",
+  };
+
+  return [Theme, { Theme, changeTheme, ThemeTextColor, ThemeBackgroundColor }];
 };

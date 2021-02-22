@@ -1,18 +1,23 @@
 import React, { useContext } from "react";
-import { View, StyleSheet } from "react-native";
 
+// React elements imports
+import { View, StyleSheet } from "react-native";
 import { Divider, Text } from "react-native-elements";
+
+// Context imports
 import { ThemeContext } from "../../context/ThemeContext";
 
 const EndOfResultsView = ({ results }) => {
-  const { Theme } = useContext(ThemeContext);
+  // This component displays at the end of the list of results, returns "bottom of results" | "No results"
+
+  const BOTTOM_OF_RESULTS_MESSAGE = "bottom of results";
+  const NO_RESULTS_MESSAGE = "No results matched search";
+
+  const { ThemeTextColor } = useContext(ThemeContext);
   const styles = StyleSheet.create({
-    ThemeTextColor: {
-      color: Theme === "dark" ? "white" : "black",
-    },
     ResultsText: {
       alignSelf: "center",
-      color: Theme === "dark" ? "white" : "black",
+      ...ThemeTextColor,
     },
   });
   return (
@@ -20,11 +25,11 @@ const EndOfResultsView = ({ results }) => {
       <Divider />
       {results.length > 0 ? (
         <Text h4 style={styles.ResultsText}>
-          bottom of results :)
+          {BOTTOM_OF_RESULTS_MESSAGE}
         </Text>
       ) : (
         <Text h4 style={styles.ResultsText}>
-          No results matched search!
+          {NO_RESULTS_MESSAGE}
         </Text>
       )}
     </View>

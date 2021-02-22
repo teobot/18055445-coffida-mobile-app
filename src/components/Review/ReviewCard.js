@@ -1,22 +1,38 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Dimensions } from "react-native";
-import { View, Text, StyleSheet, Modal, ActivityIndicator } from "react-native";
+
+// React element imports
+import {
+  View,
+  Text,
+  Modal,
+  ActivityIndicator,
+  Dimensions,
+  TouchableOpacity,
+} from "react-native";
 import { Image, Avatar } from "react-native-elements";
 
+// React image zoomer import
 import ImageViewer from "react-native-image-zoom-viewer";
 
+// Custom component imports
 import LocationRatingStats from "../Location/LocationRatingStats";
 import ReviewLikeButton from "./ReviewLikeButton";
-import coffida from "../../api/coffida";
-import { TouchableOpacity } from "react-native";
 
+// Api import
+import coffida from "../../api/coffida";
+
+// Context import
 import { ThemeContext } from "../../context/ThemeContext";
 
 const ReviewCard = ({ review, location_id, user_information }) => {
+  // The ReviewCard component displays a review object
+
+  // useState init
   const [ReviewImage, setReviewImage] = useState(null);
   const [ModelVisible, setModelVisible] = useState(false);
 
-  const { Theme } = useContext(ThemeContext);
+  // Context init
+  const { Theme, ThemeTextColor } = useContext(ThemeContext);
 
   const CheckIfReviewImageExists = async () => {
     // Function returns review image if exists, otherwise doesn't render any images
@@ -32,6 +48,7 @@ const ReviewCard = ({ review, location_id, user_information }) => {
   };
 
   useEffect(() => {
+    // On user information change check if review has a image
     CheckIfReviewImageExists();
   }, [user_information]);
 
@@ -115,38 +132,10 @@ const ReviewCard = ({ review, location_id, user_information }) => {
       ) : null}
 
       <View style={{ flex: 1, padding: 10 }}>
-        <Text style={{color: Theme === "dark" ? "whitesmoke" : "#222222"}}>{review.review_body}</Text>
+        <Text style={ThemeTextColor}>{review.review_body}</Text>
       </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  reviewDetailsSubStyle: {
-    flex: 1,
-  },
-  reviewDetailsLikes: {
-    flex: 1,
-  },
-  reviewDetailsSpacer: {
-    flex: 1,
-  },
-  reviewDetailsStyle: {
-    flex: 2,
-  },
-  reviewTopImageStyle: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  reviewContainerTop: {
-    flexDirection: "row",
-    flex: 1,
-  },
-  reviewContainerBottom: {
-    flex: 1,
-    padding: 5,
-  },
-});
 
 export default ReviewCard;

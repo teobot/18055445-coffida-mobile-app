@@ -1,10 +1,11 @@
 import React from "react";
-import { StyleSheet, View } from "react-native";
 
+// React element imports
+import { View } from "react-native";
 import { Button } from "react-native-elements";
 
 const SearchPaginationButton = ({ state, results, dispatcher }) => {
-  // There are possibly more results
+  // This is the search pagination component button to control gathering more or less results
   return (
     <View
       style={{
@@ -40,7 +41,5 @@ const SearchPaginationButton = ({ state, results, dispatcher }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default SearchPaginationButton;

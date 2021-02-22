@@ -1,8 +1,13 @@
 import React from "react";
+
+// React element import
 import { View, Text, StyleSheet } from "react-native";
+
+// Icon import
 import { AntDesign } from "@expo/vector-icons";
 
 const LocationQuickStats = ({ name, rating, ratingTitle, styles }) => {
+  // This displays the title with a small rating/label
   return (
     <View style={{ ...styles, ...view_styles.statsContainerStyle }}>
       <View style={{ flex: 1 }}>
@@ -67,24 +72,6 @@ const view_styles = StyleSheet.create({
   nameContainerStyle: {
     fontSize: 36,
     color: "white",
-  },
-  locationStatsStyleContainer: {
-    flex: 1,
-  },
-  locationStatHeaderStyle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    alignSelf: "center",
-    padding: 10,
-  },
-  locationStatSubTextStyle: {
-    fontSize: 12,
-    alignSelf: "center",
-  },
-  starIconStyle: {
-    color: "gold",
-    alignSelf: "center",
-    fontSize: 20,
   },
   textShadow: {
     textShadowColor: "rgba(0, 0, 0, 0.9)",

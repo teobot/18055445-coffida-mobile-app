@@ -1,23 +1,32 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+
+// React element imports
+import { StyleSheet, TouchableOpacity } from "react-native";
+
+// Icon import
 import { AntDesign } from "@expo/vector-icons";
 
+// Api import
 import coffida from "../../api/coffida";
+
+// Helper import
 import AuthenticationHelper from "../../helpers/AuthenticationHelper";
+
+// Context import
 import { ToastContext } from "../../context/ToastContext";
 
 const LocationLikeButton = ({ id }) => {
+  // The is the location review button for liking a location
+
+  // useState init
   const [favourited, setfavorited] = useState(false);
   const [loadedIfFavourited, setLoadedIfFavourited] = useState(false);
-  const {
-    showToast,
-    show404Toast,
-    show500Toast,
-    show200Toast,
-    showBadInputToast,
-    showGoodInputToast,
-  } = useContext(ToastContext);
+
+  // Context iit
+  const { show500Toast, showBadInputToast } = useContext(ToastContext);
+
   useEffect(() => {
+    // If the id of the location changes, check if the user has liked the new location
     checkUserLikedLocation();
   }, [id]);
 
@@ -83,7 +92,7 @@ const LocationLikeButton = ({ id }) => {
       setLoadedIfFavourited(true);
     } catch (error) {
       // : Error when getting the user id or the user information
-      show500Toast("Network issue, please check internet connection")
+      show500Toast("Network issue, please check internet connection");
     }
   };
 

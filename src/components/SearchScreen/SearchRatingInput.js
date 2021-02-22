@@ -1,6 +1,10 @@
 import React, { useContext } from "react";
+
+// React element imports
 import { View, StyleSheet } from "react-native";
 import { Text, Rating } from "react-native-elements";
+
+// Context imports
 import { ThemeContext } from "../../context/ThemeContext";
 
 const SearchRatingInput = ({
@@ -10,14 +14,18 @@ const SearchRatingInput = ({
   dispatcher,
   imageSize,
 }) => {
+  // This component handles a rating input with label
+
+  // init variables
   const imageSizeValue = imageSize ? imageSize : 30;
-  const { Theme } = useContext(ThemeContext);
+
+  // context init
+  const { ThemeTextColor, Theme } = useContext(ThemeContext);
+
   return (
     <View style={{ alignItems: "center" }}>
       <View style={{ padding: 5 }}>
-        <Text style={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}>
-          {title}
-        </Text>
+        <Text style={ThemeTextColor}>{title}</Text>
         <Rating
           type="custom"
           tintColor={Theme === "light" ? "#f2f2f2" : "black"}

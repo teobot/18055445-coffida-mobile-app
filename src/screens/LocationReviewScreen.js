@@ -1,30 +1,30 @@
 import React, { useState, useEffect, useReducer, useContext } from "react";
-import {
-  View,
-  StyleSheet,
-  ScrollView,
-  Dimensions,
-  ActivityIndicator,
-} from "react-native";
 
+// React element imports
+import { View, StyleSheet, ScrollView, ActivityIndicator } from "react-native";
 import { Button, Image, Text, Input } from "react-native-elements";
 
+// Navigation import
 import { withNavigation } from "react-navigation";
 
+// Custom component imports
 import DeleteReview from "../components/DeleteReview";
 import SearchRatingInput from "../components/SearchScreen/SearchRatingInput";
 
+// Helper imports
 import ValidationHelper from "../helpers/ValidationHelper";
-
-import { ThemeContext } from "../context/ThemeContext";
-import { ToastContext } from "../context/ToastContext";
-
-import coffida from "../api/coffida";
-
 import ImageHelper from "../helpers/ImageHelper";
 import * as Permissions from "expo-permissions";
 import * as ImagePicker from "expo-image-picker";
 
+// Context imports
+import { ThemeContext } from "../context/ThemeContext";
+import { ToastContext } from "../context/ToastContext";
+
+// Api imports
+import coffida from "../api/coffida";
+
+// This reducer handles the changing on the location review ratings
 const reducer = (state, action) => {
   switch (action.type) {
     case "change_overall_rating":
@@ -42,16 +42,26 @@ const reducer = (state, action) => {
   }
 };
 
+// Camera options
+const CAMERA_QUALITY = 0.7; // 0.0 - 1.0
+const CAMERA_ASPECT_RATIO = [16, 9]; // [width, height]
+const CAMERA_ALLOW_EDITING = true; // true || false
+const CAMERA_BASE64 = true; // true || false - WARNING: has to be TRUE if you want to post to backend
+
 const LocationReviewScreen = ({ navigation }) => {
+  // This is the location review screen where the user can post and edit their reviews
+
+  // state and const initialization
   const {
     userReview,
     userReviewAlready,
     location_id,
   } = navigation.state.params;
-
   const [ReviewImage, setReviewImage] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const REVIEW_RATING_IMAGE_SIZE = 50;
+
+  // React reducer init
   const [state, dispatch] = useReducer(reducer, {
     overall_rating: userReviewAlready ? userReview.overall_rating : 0,
     price_rating: userReviewAlready ? userReview.price_rating : 0,
@@ -60,17 +70,18 @@ const LocationReviewScreen = ({ navigation }) => {
     review_body: userReviewAlready ? userReview.review_body : "",
   });
 
+  // Context inits
   const {
     showToast,
     show404Toast,
     show500Toast,
     show200Toast,
     showBadInputToast,
-    showGoodInputToast,
   } = useContext(ToastContext);
-  const { Theme } = useContext(ThemeContext);
+  const { ThemeTextColor } = useContext(ThemeContext);
 
   useEffect(() => {
+    // Init a didFocus listener to update the review image
     const didFocusListener = navigation.addListener("didFocus", (payload) => {
       CheckIfReviewImageExists();
     });
@@ -82,18 +93,19 @@ const LocationReviewScreen = ({ navigation }) => {
   const CheckIfReviewImageExists = async () => {
     // Function returns review image if exists, otherwise doesn't render any images
     try {
-      setReviewImage(null);
       const image = await coffida.get(
         `/location/${location_id}/review/${userReview.review_id}/photo`
       );
       setReviewImage(image.request.responseURL + "?time=" + new Date());
     } catch (error) {
-      // Image does not exist but no need to
-      // do anything.
+      // Image does not exist
     }
   };
 
   const takeImageHandler = async () => {
+    // The function handles the taking of the picture
+
+    // Ask for camera and media library permissions
     const CAMERA_PERMISSIONS = await Permissions.askAsync(Permissions.CAMERA);
     const MEDIA_LIBRARY_PERMISSIONS = await Permissions.askAsync(
       Permissions.MEDIA_LIBRARY
@@ -103,22 +115,26 @@ const LocationReviewScreen = ({ navigation }) => {
       CAMERA_PERMISSIONS.status !== "granted" &&
       MEDIA_LIBRARY_PERMISSIONS.status !== "granted"
     ) {
+      // If the user has denied either permission show a message
       showBadInputToast({
         topMessage: "Permissions error",
         bottomMessage: "Hey! You have not enabled selected permissions",
       });
     } else {
+      // If the user has allowed camera and media library permissions
+      // Force aspect ration 16:9
       const cameraImage = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        aspect: [16, 9],
-        quality: 0.7,
-        base64: true,
+        allowsEditing: CAMERA_ALLOW_EDITING,
+        aspect: CAMERA_ASPECT_RATIO,
+        quality: CAMERA_QUALITY,
+        base64: CAMERA_BASE64,
       });
       postImage(cameraImage);
     }
   };
 
   const postImage = async (image) => {
+    // This handles the posting of the image to the coffida backend
     const response = await ImageHelper.onPictureSaved(
       image,
       location_id,
@@ -127,18 +143,20 @@ const LocationReviewScreen = ({ navigation }) => {
     if (response.status === "OK") {
       // Image posting status is successful
       show200Toast("Image posted");
-      await CheckIfReviewImageExists();
+      CheckIfReviewImageExists();
     } else {
+      // Image posting failed
       show404Toast("Image posting failed");
     }
   };
 
   const handleReviewImageDelete = async () => {
-    // handle review image deletion
+    // Handles review image deletion
     try {
       const response = await coffida.delete(
         `/location/${location_id}/review/${userReview.review_id}/photo`
       );
+      // Image is deleted, display message and clear the state
       show200Toast("Image deleted");
       setReviewImage(null);
     } catch (error) {
@@ -159,6 +177,7 @@ const LocationReviewScreen = ({ navigation }) => {
       errors.forEach((error) => {
         error_message += error + "\n";
       });
+      // Display all error message to the user
       showToast({
         type: "error",
         position: "top",
@@ -201,10 +220,7 @@ const LocationReviewScreen = ({ navigation }) => {
   return (
     <ScrollView style={{ paddingHorizontal: 5, marginVertical: 25 }}>
       <View style={{ padding: 30 }}>
-        <Text
-          h4
-          style={{ color: Theme === "light" ? "#222222" : "whitesmoke" }}
-        >
+        <Text h4 style={ThemeTextColor}>
           {userReviewAlready
             ? "Your Review Image"
             : "You need to review before adding images"}
@@ -297,7 +313,7 @@ const LocationReviewScreen = ({ navigation }) => {
             padding: 5,
             margin: 5,
           }}
-          inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+          inputStyle={ThemeTextColor}
         />
 
         <Button
@@ -311,9 +327,9 @@ const LocationReviewScreen = ({ navigation }) => {
   );
 };
 
-const styles = StyleSheet.create({});
-
 LocationReviewScreen.navigationOptions = ({ navigation }) => {
+  // This handles the review deletion,
+  // I send the location_id and review_id to the deleteReview Component
   if (
     navigation.state.params.location_id !== null &&
     navigation.state.params.userReview !== null

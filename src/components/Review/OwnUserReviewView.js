@@ -1,8 +1,16 @@
 import React, { useState, useEffect, useContext } from "react";
-import { View, Text, StyleSheet } from "react-native";
-import { Divider, Button } from "react-native-elements";
+
+// React elements import
+import { View, Text } from "react-native";
+import { Button } from "react-native-elements";
+
+// Navigation import
 import { withNavigation } from "react-navigation";
+
+// Icon import
 import Icon from "react-native-vector-icons/FontAwesome";
+
+// Context import
 import { ThemeContext } from "../../context/ThemeContext";
 
 const OwnUserReviewView = ({
@@ -10,28 +18,42 @@ const OwnUserReviewView = ({
   user_information,
   navigation,
 }) => {
+  // This is the component that handles the own users review
+
+  // useState init
   const [userReviewAlready, setUserReviewAlready] = useState(false);
   const [userReview, setUserReview] = useState(null);
+
+  // Context init
+  const { Theme, ThemeTextColor } = useContext(ThemeContext);
+
+  // Variable init
   const location_id = locationResult.location_id;
-  const { Theme } = useContext(ThemeContext);
 
   useEffect(() => {
+    // If the user information has changed
     checkIfUserHasReviewed();
   }, [user_information]);
 
   useEffect(() => {
+    // If the location information has changed
     checkIfUserHasReviewed();
   }, [locationResult]);
 
   const checkIfUserHasReviewed = async () => {
+    // Check if the user has reviewed the given location
     if (user_information !== null) {
       try {
         const { reviews } = user_information;
         let USER_REVIEW = null;
+
         for (let i = 0; i < locationResult.location_reviews.length; i++) {
+          // Foreach of the location reviews from the location information
           const location_review = locationResult.location_reviews[i];
           for (let j = 0; j < reviews.length; j++) {
+            // Foreach of the review that the user information method has returned
             const user_review = reviews[j].review;
+            // See if the location review is matches any user review
             if (location_review.review_id === user_review.review_id) {
               // The user has reviewed the location
               USER_REVIEW = user_review;
@@ -44,6 +66,8 @@ const OwnUserReviewView = ({
         setUserReviewAlready(USER_REVIEW !== null);
       } catch (error) {
         // Error determining if the user has already reviewed
+        setUserReview(null);
+        setUserReviewAlready(null);
       }
     } else {
       // : user information is still loading on the parent view
@@ -57,7 +81,7 @@ const OwnUserReviewView = ({
           fontSize: 26,
           fontWeight: "bold",
           marginBottom: 5,
-          color: Theme === "dark" ? "whitesmoke" : "#222222",
+          ...ThemeTextColor,
         }}
       >
         Your Review:
@@ -83,7 +107,5 @@ const OwnUserReviewView = ({
     </View>
   );
 };
-
-const styles = StyleSheet.create({});
 
 export default withNavigation(OwnUserReviewView);
