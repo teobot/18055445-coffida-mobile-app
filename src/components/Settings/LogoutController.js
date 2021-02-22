@@ -4,9 +4,11 @@ import AuthenticationHelper from "../../helpers/AuthenticationHelper";
 import coffida from "../../api/coffida";
 import { withNavigation } from "react-navigation";
 import { ToastContext } from "../../context/ToastContext";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const LogoutController = ({ navigation }) => {
   const { showBadInputToast } = useContext(ToastContext);
+  const { Theme } = useContext(ThemeContext);
   const logout = async () => {
     try {
       // Try to reach the logout endpoint
@@ -23,10 +25,24 @@ const LogoutController = ({ navigation }) => {
     }
   };
   return (
-    <ListItem bottomDivider onPress={logout}>
-      <Icon type="ionicon" name="log-out-outline" />
+    <ListItem
+      bottomDivider
+      onPress={logout}
+      containerStyle={{
+        backgroundColor: Theme === "dark" ? "#222222" : "white",
+      }}
+    >
+      <Icon
+        color={Theme === "dark" ? "white" : "#222222"}
+        type="ionicon"
+        name="log-out-outline"
+      />
       <ListItem.Content>
-        <ListItem.Title>Logout</ListItem.Title>
+        <ListItem.Title
+          style={{ color: Theme === "dark" ? "white" : "#222222" }}
+        >
+          Logout
+        </ListItem.Title>
       </ListItem.Content>
       <ListItem.Chevron />
     </ListItem>
