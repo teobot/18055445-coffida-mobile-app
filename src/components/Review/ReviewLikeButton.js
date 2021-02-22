@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { View, Text, StyleSheet, Button, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 import coffida from "../../api/coffida";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const ReviewLikeButton = ({ location_id, user_information, review }) => {
   const [likedReview, setLikedReview] = useState(false);
   const [likes, setLikes] = useState(review.likes);
+  const { Theme } = useContext(ThemeContext);
 
   useEffect(() => {
     if (user_information !== null) {
@@ -64,7 +66,7 @@ const ReviewLikeButton = ({ location_id, user_information, review }) => {
           color="red"
         />
       </TouchableOpacity>
-      <Text style={{ fontSize: 12, fontWeight: "bold" }}>{likes}</Text>
+      <Text style={{ fontSize: 12, fontWeight: "bold", color: Theme === "dark" ? "whitesmoke" : "#222222" }}>{likes}</Text>
     </>
   );
 };
