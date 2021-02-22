@@ -16,6 +16,7 @@ import { ToastContext } from "../context/ToastContext";
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("bashley.williams@mmu.ac.uk");
   const [password, setPassword] = useState("hello123");
+  const [passwordVisible, setPasswordVisible] = useState(true);
   // const [email, setEmail] = useState("");
   // const [password, setPassword] = useState("");
   const [showLoginLoader, setShowLoginLoader] = useState(true);
@@ -131,28 +132,39 @@ const LoginScreen = ({ navigation }) => {
           flexDirection: "column",
         }}
       >
-        <View style={{ flex: 5, justifyContent: "center", paddingVertical: 15 }}>
-          <View>
+        <View style={{ flex: 5, justifyContent: "center", marginVertical: 15 }}>
+          <View style={{ flex: 1 }}>
             <Input
               autoCapitalize="none"
               autoCorrect={false}
               value={email}
               onChangeText={(userEmail) => setEmail(userEmail)}
               placeholder="Email"
-              inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+              inputStyle={{
+                color: Theme === "dark" ? "whitesmoke" : "#222222",
+              }}
             />
           </View>
-          <View style={{flexDirection: "row"}}>
+          <View style={{ flexDirection: "row", flex: 1 }}>
             <Input
               autoCapitalize="none"
               autoCorrect={false}
               value={password}
-              secureTextEntry={true}
+              secureTextEntry={passwordVisible}
               onChangeText={(userPassword) => setPassword(userPassword)}
               placeholder="Password"
-              inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+              inputStyle={{
+                color: Theme === "dark" ? "whitesmoke" : "#222222",
+              }}
+              containerStyle={{ flex: 1 }}
             />
-
+            <Icon
+              onPress={() => setPasswordVisible(!passwordVisible)}
+              name={passwordVisible ? "eye-off" : "eye-outline"}
+              type="ionicon"
+              size={36}
+              color="#517fa4"
+            />
           </View>
         </View>
         <View

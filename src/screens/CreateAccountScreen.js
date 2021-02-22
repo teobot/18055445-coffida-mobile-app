@@ -55,8 +55,8 @@ const CreateAccountScreen = ({ navigation }) => {
     if (errors !== undefined) {
       // Show of the user input has returned errors
       let error_message = "";
-      errors.forEach(error => {
-        error_message += error + "\n"
+      errors.forEach((error) => {
+        error_message += error + "\n";
       });
       showToast({
         type: "error",
@@ -119,7 +119,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_first_name", payload: newVal })
             }
             placeholder="First name"
-            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
           />
         </View>
 
@@ -132,7 +132,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_last_name", payload: newVal })
             }
             placeholder="Last name"
-            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
           />
         </View>
 
@@ -145,7 +145,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_email", payload: newVal })
             }
             placeholder="Email"
-            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
           />
         </View>
 
@@ -159,7 +159,7 @@ const CreateAccountScreen = ({ navigation }) => {
               dispatch({ type: "change_password", payload: newVal })
             }
             placeholder="Password"
-            inputStyle={Theme === "dark" ? { color: "lightgrey" } : null}
+            inputStyle={{ color: Theme === "dark" ? "whitesmoke" : "#222222" }}
           />
           <Icon
             onPress={() => setPasswordVisible(!passwordVisible)}

@@ -49,6 +49,7 @@ const LocationReviewScreen = ({ navigation }) => {
     userReviewAlready,
     location_id,
   } = navigation.state.params;
+  
   const [ReviewImage, setReviewImage] = useState(null);
   const [disableButton, setDisableButton] = useState(false);
   const REVIEW_RATING_IMAGE_SIZE = 50;
@@ -319,7 +320,12 @@ LocationReviewScreen.navigationOptions = ({ navigation }) => {
     navigation.state.params.userReview !== null
   ) {
     return {
-      headerRight: () => <DeleteReview navigation={navigation} />,
+      headerRight: () => (
+        <DeleteReview
+          location_id={navigation.state.params.location_id}
+          review_id={navigation.state.params.userReview.review_id}
+        />
+      ),
     };
   }
 };

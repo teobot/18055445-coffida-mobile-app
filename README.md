@@ -15,6 +15,10 @@ Version: **1.3.6**
 
 ## Changes
 
+### 23/02/2021
+- Updated logos
+- Fixed issue on deleting review
+- 
 ### 22/02/2021
 - Implement a dark mode feature
 - Updated asset visuals

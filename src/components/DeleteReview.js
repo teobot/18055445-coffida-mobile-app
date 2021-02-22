@@ -4,15 +4,17 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 import { Button, Overlay } from "react-native-elements";
 
+import { withNavigation } from "react-navigation";
+
 import { ToastContext } from "../context/ToastContext";
 import { ThemeContext } from "../context/ThemeContext";
 
 import coffida from "../api/coffida";
 
-const DeleteReview = ({ navigation }) => {
-  const location_id = navigation.state.params.locationId;
-  const review_id = navigation.state.params.userReview.review_id;
-  const { show404Toast, show500Toast, show200Toast } = useContext(ToastContext);
+const DeleteReview = ({ navigation, location_id, review_id }) => {
+  const { showBadInputToast, show500Toast, show200Toast } = useContext(
+    ToastContext
+  );
   const [overlay, setOverlay] = useState(false);
   const { Theme } = useContext(ThemeContext);
 
@@ -30,13 +32,18 @@ const DeleteReview = ({ navigation }) => {
         });
       } else {
         // : Deletion of the review has failed
-        show404Toast("Review could not be deleted");
+        showBadInputToast({
+          topMessage: "Deletion Error",
+          bottomMessage: "Review could not be deleted",
+        });
       }
     } catch (error) {
       // : Deletion of the review networking has failed
-      show500Toast("Review could not be deleted");
+      console.log(error);
+      show500Toast();
     }
   };
+
   return (
     <TouchableOpacity style={{ padding: 10 }} onPress={() => setOverlay(true)}>
       <Overlay isVisible={overlay}>
@@ -90,4 +97,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DeleteReview;
+export default withNavigation(DeleteReview);
