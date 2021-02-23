@@ -10,12 +10,13 @@ import coffida from "../api/coffida";
 
 // Custom Component imports
 import LoadingScreen from "../screens/LoadingScreen";
-import ResultRow from "../components/ResultRow";
+import ResultRow from "../components/Results/ResultRow";
 import ReviewCard from "../components/Review/ReviewCard";
 import LocationLikeButton from "../components/Location/LocationLikeButton";
 import LocationQuickStats from "../components/Location/LocationQuickStats";
 import LocationRatingStats from "../components/Location/LocationRatingStats";
 import OwnUserReviewView from "../components/Review/OwnUserReviewView";
+import NoResultsView from "../components/Results/NoResultsView";
 
 // Library imports
 import { getDistance } from "geolib";
@@ -45,9 +46,7 @@ const LocationScreen = ({ navigation }) => {
 
   // Context import
   const { userLocation } = useContext(LocationContext);
-  const { Theme, ThemeBackgroundColor } = useContext(
-    ThemeContext
-  );
+  const { Theme, ThemeBackgroundColor } = useContext(ThemeContext);
   const { show500Toast } = useContext(ToastContext);
 
   // Google map reference
@@ -216,14 +215,18 @@ const LocationScreen = ({ navigation }) => {
           <Divider />
 
           <ResultRow title="Reviews" containerMargin={5} containerPadding={5}>
-            {locationResult.location_reviews.map((item) => (
-              <ReviewCard
-                key={item.review_id}
-                user_information={userInformation}
-                location_id={locationResult.location_id}
-                review={item}
-              />
-            ))}
+            {locationResult.location_reviews.length > 0 ? (
+              locationResult.location_reviews.map((item) => (
+                <ReviewCard
+                  key={item.review_id}
+                  user_information={userInformation}
+                  location_id={locationResult.location_id}
+                  review={item}
+                />
+              ))
+            ) : (
+              <NoResultsView message="Reviews" />
+            )}
           </ResultRow>
         </View>
       </View>
