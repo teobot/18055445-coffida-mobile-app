@@ -2,8 +2,8 @@
 Created By: **Theo Jed Barber Clapperton**  
 Written In: **React Native**  
 Student ID: **18055445**  
-Last Updated: **22/02/2021**  
-Version: **1.3.9**
+Last Updated: **24/02/2021**  
+Version: **1.4**
 
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
@@ -20,6 +20,14 @@ Version: **1.3.9**
 - All new issues with be moved to the [issues page](https://github.com/teobot/rn-coffida/issues) on GitHub
 
 ## Changes
+
+### 24/02/2021
+- Moved ResultRow component
+- Made new NoResults component from if the location or user has no review/favorites
+- AccountScreen: Imported new NoResults component
+- LocationScreen: Imported new NoResults component
+- Updated README
+- Updated version
 
 ### 24/02/2021
 - coffida.js: Added comments, Integrated refactored theme coloring
