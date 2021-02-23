@@ -18,9 +18,12 @@ import { withNavigation } from "react-navigation";
 
 // Custom component imports
 import LoadingScreen from "../screens/LoadingScreen";
-import ResultRow from "../components/ResultRow";
+import ResultRow from "../components/Results/ResultRow";
 import ReviewCard from "../components/Review/ReviewCard";
 import LocationCard from "../components/Location/LocationCard";
+import NoResultsView from "../components/Results/NoResultsView";
+
+// Helper imports
 import CoffidaHelper from "../helpers/CoffidaHelper";
 
 // Context imports
@@ -211,6 +214,7 @@ const AccountScreen = ({ navigation }) => {
           <FlatList
             horizontal
             data={userInformation.favourite_locations}
+            ListEmptyComponent={<NoResultsView message="Favorites"/>}
             keyExtractor={(result) => `${result.location_id}`}
             renderItem={({ item }) => {
               return <LocationCard item={item} />;
@@ -219,22 +223,26 @@ const AccountScreen = ({ navigation }) => {
         </ResultRow>
 
         <ResultRow title="My Reviews" containerMargin={5} containerPadding={5}>
-          {userInformation.reviews.map((item) => (
-            <TouchableOpacity
-              key={item.review.review_id}
-              onPress={() =>
-                navigation.navigate("Location", {
-                  location_id: item.location.location_id,
-                })
-              }
-            >
-              <ReviewCard
-                user_information={userInformation}
-                location_id={item.location.location_id}
-                review={item.review}
-              />
-            </TouchableOpacity>
-          ))}
+          {userInformation.reviews.length > 0 ? (
+            userInformation.reviews.map((item) => (
+              <TouchableOpacity
+                key={item.review.review_id}
+                onPress={() =>
+                  navigation.navigate("Location", {
+                    location_id: item.location.location_id,
+                  })
+                }
+              >
+                <ReviewCard
+                  user_information={userInformation}
+                  location_id={item.location.location_id}
+                  review={item.review}
+                />
+              </TouchableOpacity>
+            ))
+          ) : (
+            <NoResultsView message="Reviews" />
+          )}
         </ResultRow>
       </View>
     </ScrollView>
