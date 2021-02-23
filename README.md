@@ -8,10 +8,10 @@ Version: **1.4**
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
 ## Running
-1. Run `npm install` inside the coffida directory
-2. Make sure that the coffida backend if running
+1. Run `npm install` inside the this directory
+2. Make sure that the coffida backend is running
 3. If needed change the URL of the coffida backend inside ***/src/api/coffida.js***
-4. Run `npm start` inside this app root directory
+4. Run `npm start` inside this app root directory to run the application
 
 ## Building
 - Run `expo build:android` or `expo build:ios`.
