@@ -5,7 +5,7 @@ import { View, Text } from "react-native";
 import { Divider } from "react-native-elements";
 
 // Context import
-import { ThemeContext } from "../context/ThemeContext";
+import { ThemeContext } from "../../context/ThemeContext";
 
 const ResultRow = ({
   title,
