@@ -143,6 +143,7 @@ const AccountScreen = ({ navigation }) => {
       borderTopRightRadius: 15,
       paddingTop: 60,
       ...ThemeBackgroundColor,
+      minHeight: windowHeight * 0.6,
     },
     profileImageStyle: {
       height: 120,
@@ -166,7 +167,11 @@ const AccountScreen = ({ navigation }) => {
     return <LoadingScreen message="Loading account information" />;
   }
   return (
-    <ScrollView style={{ backgroundColor: "rgb(30,34,52)" }}>
+    <ScrollView
+      style={{
+        backgroundColor: "rgb(30,34,52)",
+      }}
+    >
       <Image
         style={styles.profileImageStyle}
         source={{
@@ -214,7 +219,7 @@ const AccountScreen = ({ navigation }) => {
           <FlatList
             horizontal
             data={userInformation.favourite_locations}
-            ListEmptyComponent={<NoResultsView message="Favorites"/>}
+            ListEmptyComponent={<NoResultsView message="Favorites" />}
             keyExtractor={(result) => `${result.location_id}`}
             renderItem={({ item }) => {
               return <LocationCard item={item} />;
