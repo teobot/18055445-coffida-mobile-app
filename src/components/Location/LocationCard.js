@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { Icon, Badge } from "react-native-elements";
+import { Icon, Button } from "react-native-elements";
 
 // Navigation import
 import { withNavigation } from "react-navigation";
@@ -77,27 +77,20 @@ const LocationCard = ({ item, navigation }) => {
           }}
         />
         {distance !== null ? (
-          <View style={{ position: "absolute", right: 0, bottom: 0 }}>
-            <Icon
-              reverse
-              reverseColor="#222222"
-              color="white"
-              name="location-outline"
-              type="ionicon"
-            />
-            <Badge
-              status="primary"
-              value={`${(distance / 1000).toFixed(
-                distance / 1000 > 9999 ? 0 : 1
-              )}KM`}
-              containerStyle={{
-                position: "absolute",
-                top: 0,
-                right: 0,
-                left: 0,
-              }}
-              badgeStyle={{ backgroundColor: "white" }}
-              textStyle={{ fontWeight: "bold", color: "#222222" }}
+          <View style={{ position: "absolute", right: 5, bottom: 5 }}>
+            <Button
+              disabled
+              raised
+              disabledTitleStyle={{ color: "#222222" }}
+              icon={
+                <Icon
+                  size={15}
+                  color="#222222"
+                  name="location-outline"
+                  type="ionicon"
+                />
+              }
+              title={`${(distance / 1000).toFixed(1)}KM`}
             />
           </View>
         ) : null}
