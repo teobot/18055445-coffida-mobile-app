@@ -3,7 +3,7 @@ Created By: **Theo Jed Barber Clapperton**
 Written In: **React Native**  
 Student ID: **18055445**  
 Last Updated: **24/02/2021**  
-Version: **1.4**
+Version: **1.4.5**
 
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
@@ -20,6 +20,13 @@ Version: **1.4**
 - All new issues with be moved to the [issues page](https://github.com/teobot/rn-coffida/issues) on GitHub
 
 ## Changes
+
+### 24/02/2021
+- LocationCard: Fixed distance to location
+- AccountScreen: Fixed blank space at bottom of the screen
+- LoginScreen: Changed Toast to be more informative
+- Updated README
+- Updated version
 
 ### 24/02/2021
 - Moved ResultRow component
