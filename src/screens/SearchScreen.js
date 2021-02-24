@@ -124,6 +124,13 @@ const SearchScreen = () => {
     if (state === SearchParamsInitialState) {
       getResult();
     }
+  }, [userLocation]);
+
+  useEffect(() => {
+    // If the user location changes then refresh
+    if (state === SearchParamsInitialState) {
+      getResult();
+    }
   }, [state]);
 
   // useRef to only trigger the function after the initial render
