@@ -111,7 +111,14 @@ const LoginScreen = ({ navigation }) => {
       // Login request failed
       if (error.response.status === 400) {
         // : Bad login credentials
-        show404Toast();
+        showToast({
+          type: "error",
+          position: "top",
+          text1: "Error with credentials",
+          text2: "Email doesn't match with password, try again",
+          visibilityTime: 4000,
+          autoHide: true,
+        });
       } else {
         // : most likely networking issue
         show500Toast();
