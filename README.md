@@ -1,9 +1,14 @@
 # Coffida React Native Mobile App
-Created By: **Theo Jed Barber Clapperton**  
-Written In: **React Native**  
-Student ID: **18055445**  
-Last Updated: **24/02/2021**  
-Version: **1.4.5**
+*Student ID*: **18055445**  
+*Created By*: **Theo Jed Barber Clapperton**  
+*Description*: **A mobile Coffee Review Service**  
+*Written In*: **React Native**  
+*Last Updated*: **24/02/2021**  
+*Style Guide*: **Prettier**  
+*Linter*: **ESlint**  
+*Version*: **`1.4.5`**  
+*Github Repo Link*: ***[Repo Link](https://github.com/teobot/18055445-coffida-mobile-app/settings)***  
+*App Screen-cast*: ***[YouTube Link](https://www.youtube.com/watch?v=18M6XCi7B5s)***
 
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
@@ -17,7 +22,7 @@ Version: **1.4.5**
 - Run `expo build:android` or `expo build:ios`.
 
 ## Issues
-- All new issues with be moved to the [issues page](https://github.com/teobot/rn-coffida/issues) on GitHub
+- All new issues have be moved to the [issues page](https://github.com/teobot/rn-coffida/issues) on GitHub
 
 ## Changes
 
