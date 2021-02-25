@@ -7,7 +7,7 @@
 *Style Guide*: **Prettier**  
 *Linter*: **ESlint**  
 *Version*: **`1.4.5`**  
-*Github Repo Link*: ***[Repo Link](https://github.com/teobot/18055445-coffida-mobile-app/settings)***  
+*Github Repo Link*: ***[Repo Link](https://github.com/teobot/18055445-coffida-mobile-app)***  
 *App Screen-cast*: ***[YouTube Link](https://www.youtube.com/watch?v=18M6XCi7B5s)***
 
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
