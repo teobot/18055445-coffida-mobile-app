@@ -10,6 +10,7 @@
 *Github Repo Link*: ***[Github Link](https://github.com/teobot/18055445-coffida-mobile-app)***  
 *YouTube Screen-cast*: ***[YouTube Link](https://www.youtube.com/watch?v=18M6XCi7B5s)***
 
+![Mobile Image](https://i.imgur.com/HNsmSpI.png)
 ![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
 ## Running
