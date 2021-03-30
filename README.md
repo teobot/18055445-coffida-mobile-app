@@ -1,7 +1,7 @@
 # Coffida React Native Mobile App
 *Student ID*: **18055445**  
-*Created By*: **Theo Jed Barber Clapperton**  
-*Description*: **A mobile Coffee Review Service**  
+*Created By*: **Theo Clapperton**  
+*Description*: **A mobile coffee review service**  
 *Written In*: **React Native**  
 *Last Updated*: **30/03/2021**  
 *Style Guide*: **Prettier**  
@@ -31,6 +31,7 @@
 - Deactivated Google Maps Api Key
 - Updated deps
 - Updated README, Version, Package-lock
+- Added more Running Project details
 
 ### 24/02/2021
 - LocationCard: Fixed distance to the location
