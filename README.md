@@ -3,21 +3,21 @@
 *Created By*: **Theo Jed Barber Clapperton**  
 *Description*: **A mobile Coffee Review Service**  
 *Written In*: **React Native**  
-*Last Updated*: **25/02/2021**  
+*Last Updated*: **30/03/2021**  
 *Style Guide*: **Prettier**  
 *Linter*: **ESlint**  
-*Version*: **`1.4.5`**  
+*Version*: **`1.4.54`**  
 *Github Repo Link*: ***[Github Link](https://github.com/teobot/18055445-coffida-mobile-app)***  
 *YouTube Screen-cast*: ***[YouTube Link](https://www.youtube.com/watch?v=18M6XCi7B5s)***
 
 ![Mobile Image](https://i.imgur.com/HNsmSpI.png)
-![Coffida](https://wallpaperaccess.com/full/1076692.jpg)
 
 ## Running
 1. Run `npm install` inside the root directory
-2. Make sure that the `coffida backend` is running
-3. If needed change the URL of the coffida backend inside ***/src/api/coffida.js***
-4. Run `npm start` inside this app root directory to run the application
+2. Make sure that the [`coffida backend`](https://github.com/ash-williams/coffida_server) is running
+3. If needed change the URL of the coffida backend inside ***`/src/api/coffida.js`***
+4. You need a Google Maps api key, Follow **[this](https://developers.google.com/maps/documentation/android-sdk/get-api-key)** guide and then place the key inside `/app.json` replacing the `GOOGLE_MAPS_API_KEY` variable placeholder
+5. Run `npm start` inside this app root directory to run the application
 
 ## Building
 - Run `expo build:android` or `expo build:ios`.
@@ -26,6 +26,11 @@
 - All new issues have been moved to the [issues page](https://github.com/teobot/rn-coffida/issues) on GitHub
 
 ## Changes
+
+### 30/03/2021 - PUBLIC RELEASE
+- Deactivated Google Maps Api Key
+- Updated deps
+- Updated README, Version, Package-lock
 
 ### 24/02/2021
 - LocationCard: Fixed distance to the location
