@@ -1,6 +1,7 @@
 # Coffida React Native Mobile App
 *Student ID*: **18055445**  
 *Created By*: **Theo Clapperton**  
+*Grade Given*: **`✨ 100% ✨`**  
 *Description*: **A mobile coffee review service**  
 *Written In*: **React Native**  
 *Last Updated*: **30/03/2021**  
